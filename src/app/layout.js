@@ -4,7 +4,7 @@ import Header from "./Components/Header";
 import { ThemeProvider } from "./context/UserContext";
 import BackgroundManager from "./Components/BackgroundManager";
 import { ToastContainer } from "react-toastify";
-
+import { Suspense } from "react";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -32,6 +32,7 @@ export default function RootLayout({ children }) {
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+         <Suspense fallback={<div>Loading...</div>}>
         <ThemeProvider>
           <div className="relative min-h-screen">
             {/* Background image */}
@@ -44,13 +45,17 @@ export default function RootLayout({ children }) {
 
             {/* Main content */}
             <div className="relative z-10 pt-[80px]">
+           
+                {children}
+              
               {/* Adding padding-top to ensure content doesn't overlap with the fixed header */}
-              {children}
+            
             </div>
           </div>
           {/* ToastContainer */}
         <ToastContainer position="top-right" autoClose={2000} />
         </ThemeProvider>
+        </Suspense>
       </body>
     </html>
   );
