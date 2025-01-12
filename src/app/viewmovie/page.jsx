@@ -3,6 +3,7 @@ import React, { useContext, useEffect } from "react";
 import Image from "next/image";
 import UserContext from "../context/UserContext";
 
+
 const Page = () => {
   const {
     movies,
@@ -14,6 +15,7 @@ const Page = () => {
   } = useContext(UserContext);
 
   useEffect(() => {
+  
     console.log("Fetching movies and users");
     fetchMoviesAndUsers();
   }, [fetchMoviesAndUsers]);

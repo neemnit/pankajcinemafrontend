@@ -4,6 +4,7 @@ import Header from "./Components/Header";
 import { ThemeProvider } from "./context/UserContext";
 import BackgroundManager from "./Components/BackgroundManager";
 import { ToastContainer } from "react-toastify";
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],

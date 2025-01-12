@@ -60,7 +60,7 @@ export const ThemeProvider = ({ children }) => {
     adharNo: "",
     password: "",
   });
-
+const pathName=usePathname()
   const searchParams = useSearchParams();
   const profile = searchParams.get("profile");
   const seatBook = searchParams.get("bookSeats");
@@ -72,7 +72,7 @@ export const ThemeProvider = ({ children }) => {
 
   const handleDelete = useCallback(async (id) => {
     if (!id) {
-      alert("Invalid movie ID");
+      toast.error("Invalid movie ID");
       return;
     }
 
@@ -128,7 +128,7 @@ export const ThemeProvider = ({ children }) => {
   const bookMovie = useCallback(
     async (id, userId) => {
       if (!id) {
-        alert("Invalid movie ID");
+        toast.error("Invalid movie ID");
         return;
       }
 
@@ -158,11 +158,11 @@ export const ThemeProvider = ({ children }) => {
           router.push(`/bookSeats/${id}`); // Redirect to bookSeats
         } else {
           const errorData = await response.json();
-          alert(`Error booking movie: ${errorData.message || "Unknown error"}`);
+          toast.error(`Error booking movie: ${errorData.message || "Unknown error"}`);
         }
       } catch (error) {
         console.error("Failed to book movie:", error);
-        alert("An unexpected error occurred. Please try again later.");
+        toast.error("An unexpected error occurred. Please try again later.");
       }
     },
     [movies]
@@ -233,6 +233,7 @@ export const ThemeProvider = ({ children }) => {
   }, []);
 
   useEffect(() => {
+    
     const token = localStorage.getItem("authToken");
     console.log("toeknwa",token)
     const role = localStorage.getItem("role");
@@ -243,15 +244,18 @@ export const ThemeProvider = ({ children }) => {
       fetchMoviesAndUsers();
       fetchRole(token);
 
-      if (role === "admin") {
+      if (role === "admin" && pathName=="/login") {
+      
         router.push("/addmovies");
-      } else if (role === "user" && !sessionId) {
+      } else if (role === "user" && !sessionId && pathName=="/login") {
+      
         router.push("/viewmovie");
       }
-    } else if (router.pathname !== "/login") {
-      // Redirect to login if not logged in
-      router.push("/login");
-    }
+    } 
+    // else if (router.pathname !== "/login") {
+    //   // Redirect to login if not logged in
+    //   router.push("/login");
+    // }
   }, [fetchMoviesAndUsers, fetchRole, isLoggedIn, router.pathname]);
 
   const contextValue = useMemo(
