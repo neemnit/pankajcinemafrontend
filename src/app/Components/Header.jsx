@@ -7,7 +7,7 @@ import UserContext from "../context/UserContext";
 import { usePathname, useRouter } from "next/navigation";
 
 const Header = React.memo(() => {
-  const { isLoggedIn, updateLoggedIn, roleType, fetchRole, setRoleType } =
+  const { isLoggedIn, updateLoggedIn, roleType, setRoleType } =
     useContext(UserContext);
   const [view, setView] = useState(true);
   const router = useRouter();
@@ -29,7 +29,11 @@ const Header = React.memo(() => {
             className="text-white"
             onClick={() => {
               setView(!view);
-              router.push(view ? "/viewmovie" : "/addmovies");
+              if (view) {
+                router.push("/viewmovie");
+              } else {
+                router.push("/addmovies");
+              }
             }}
           >
             {view ? "View Movie" : "Add Movie"}
@@ -73,13 +77,19 @@ const Header = React.memo(() => {
           </Link>
         </li>
         <li>
-          <Link
-            href={view ? "/profile" : "/viewmovie"}
+          <button
+            onClick={() => {
+              setView(!view);
+              if (view) {
+                router.push("/profile");
+              } else {
+                router.push("/viewmovie");
+              }
+            }}
             className="text-white"
-            onClick={() => setView(!view)}
           >
             {view ? "Profile" : "View Movie"}
-          </Link>
+          </button>
         </li>
         <li>
           <Link href="/ticket-status" className="text-white">
