@@ -10,7 +10,7 @@ const Checkout = ({ data }) => {
   const handleCheckout = async () => {
     try {
       // Example data to send to the backend
-      const response = await fetch("http://localhost:4000/payment", {
+      const response = await fetch("https://pankajcinemabackend-1.onrender.com/payment", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
