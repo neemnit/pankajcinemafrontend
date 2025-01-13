@@ -2,6 +2,8 @@
 import React, { useContext, useEffect } from "react";
 import Image from "next/image";
 import UserContext from "../context/UserContext";
+import { notFound, usePathname } from "next/navigation";
+import NotFound from "../not-found";
 
 
 const Page = () => {
@@ -13,10 +15,13 @@ const Page = () => {
     profileData,
     fetchMoviesAndUsers,
   } = useContext(UserContext);
+  const pathName=usePathname()
 
   useEffect(() => {
+    if(pathName!="/viewmovie"){
+        notFound()
+    }
   
-    console.log("Fetching movies and users");
     fetchMoviesAndUsers();
   }, [fetchMoviesAndUsers]);
 

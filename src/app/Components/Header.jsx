@@ -1,16 +1,17 @@
-"use client";  // This marks the component as a client component
+"use client"; // This marks the component as a client component
 
 import React, { useContext, useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import UserContext from "../context/UserContext";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 const Header = React.memo(() => {
-  const { isLoggedIn, updateLoggedIn, roleType, fetchRole, setRoleType } = useContext(UserContext);
+  const { isLoggedIn, updateLoggedIn, roleType, fetchRole, setRoleType } =
+    useContext(UserContext);
   const [view, setView] = useState(true);
   const router = useRouter();
-
+  const pathName = usePathname();
   useEffect(() => {
     // You can add logic here if needed
   }, []);
@@ -24,15 +25,15 @@ const Header = React.memo(() => {
           </Link>
         </li>
         <li>
-        <button
-      className="text-white"
-      onClick={() => {
-        setView(!view);
-        router.push(view ? "/viewmovie" : "/addmovies");
-      }}
-    >
-      {view ? "View Movie" : "Add Movie"}
-    </button>
+          <button
+            className="text-white"
+            onClick={() => {
+              setView(!view);
+              router.push(view ? "/viewmovie" : "/addmovies");
+            }}
+          >
+            {view ? "View Movie" : "Add Movie"}
+          </button>
         </li>
         <li>
           <Link href="/view-users" className="text-white">
@@ -57,22 +58,27 @@ const Header = React.memo(() => {
   };
 
   const UserLinks = () => {
-    const [viewProfile, setViewProfile] = useState(true);
-
     return (
       <>
         <li>
-          <Link href="/my-booking" className="text-white">
+          <Link
+            href="/my-booking"
+            className={
+              pathName === "/my-booking"
+                ? "font-bold mr-4"
+                : "text-blue-500 mr-4"
+            }
+          >
             My Booking
           </Link>
         </li>
         <li>
           <Link
-            href={viewProfile ? "/profile" : "/viewmovie"}
+            href={view ? "/profile" : "/viewmovie"}
             className="text-white"
-            onClick={() => setViewProfile(!viewProfile)}
+            onClick={() => setView(!view)}
           >
-            {viewProfile ? "Profile" : "View Movie"}
+            {view ? "Profile" : "View Movie"}
           </Link>
         </li>
         <li>
@@ -98,12 +104,10 @@ const Header = React.memo(() => {
   };
 
   return (
-    <div className={ `bg-slate-600 h-20 w-full flex items-center px-6 `} >
+    <div className={`bg-slate-600 h-20 w-full flex items-center px-6 `}>
       <ul className="flex w-full items-center justify-between list-none">
         {isLoggedIn ? (
-          <>
-            {roleType === "admin" ? <AdminLinks /> : <UserLinks />}
-          </>
+          <>{roleType === "admin" ? <AdminLinks /> : <UserLinks />}</>
         ) : (
           <>
             <li className="text-3xl text-white font-sans ">
@@ -116,7 +120,6 @@ const Header = React.memo(() => {
                 width={60}
                 height={40}
                 className="shadow-sm h-16 w-[32rem] object-contain"
-            
               />
             </li>
             <li>

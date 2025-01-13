@@ -19,7 +19,7 @@ export const metadata = {
   title: "Pankaj Cinema Hall",
   description: "Online Booking App",
 };
-
+import PropTypes from 'prop-types';
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
@@ -32,31 +32,34 @@ export default function RootLayout({ children }) {
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-         <Suspense fallback={<div>Loading...</div>}>
-        <ThemeProvider>
-          <div className="relative min-h-screen">
-            {/* Background image */}
-            <BackgroundManager />
+        <Suspense fallback={<div>Loading...</div>}>
+          <ThemeProvider>
+            <div className="relative min-h-screen">
+              {/* Background image */}
+              <BackgroundManager />
 
-            {/* Header - Fixed to the top */}
-            <div className="fixed top-0 left-0 w-full z-20">
-              <Header />
-            </div>
+              {/* Header - Fixed to the top */}
+              <div className="fixed top-0 left-0 w-full z-20">
+                <Header />
+              </div>
 
-            {/* Main content */}
-            <div className="relative z-10 pt-[80px]">
-           
+              {/* Main content */}
+              <div className="relative z-10 pt-[80px]">
+
                 {children}
-              
-              {/* Adding padding-top to ensure content doesn't overlap with the fixed header */}
-            
+
+                {/* Adding padding-top to ensure content doesn't overlap with the fixed header */}
+
+              </div>
             </div>
-          </div>
-          {/* ToastContainer */}
-        <ToastContainer position="top-right" autoClose={2000} />
-        </ThemeProvider>
+            {/* ToastContainer */}
+            <ToastContainer position="top-right" autoClose={500} />
+          </ThemeProvider>
         </Suspense>
       </body>
     </html>
   );
 }
+RootLayout.propTypes = {
+  children: PropTypes.node.isRequired,
+};

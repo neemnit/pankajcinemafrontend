@@ -79,7 +79,7 @@ const pathName=usePathname()
     if (confirm("Are you sure you want to delete this movie?")) {
       try {
         const response = await fetch(
-          `http://localhost:4000/deleteMovie/${id}`,
+          `https://pankajcinemabackend-1.onrender.com/deleteMovie/${id}`,
           {
             method: "DELETE",
             headers: {
@@ -233,30 +233,43 @@ const pathName=usePathname()
   }, []);
 
   useEffect(() => {
-    
-    const token = localStorage.getItem("authToken");
-    console.log("toeknwa",token)
-    const role = localStorage.getItem("role");
-
-    if (token) {
-      setIsLoggedIn(true);
-      setRoleType(role || "user");
-      fetchMoviesAndUsers();
-      fetchRole(token);
-
-      if (role === "admin" && pathName=="/login") {
-      
-        router.push("/addmovies");
-      } else if (role === "user" && !sessionId && pathName=="/login") {
-      
-        router.push("/viewmovie");
+    const initialize = async () => {
+      const token = localStorage.getItem("authToken");
+      const role = localStorage.getItem("role");
+  
+      if (token) {
+        
+        setIsLoggedIn(true);
+        setRoleType(role || "user");
+  
+        // Fetch movies and user data asynchronously
+        try {
+          await fetchMoviesAndUsers();
+          await fetchRole(token);
+        } catch (error) {
+          console.error("Error fetching data:", error);
+        }
+  
+        // Handle routing based on role and path
+        if (role === "admin" && (pathName === "/login" || pathName==="/") && pathName!=="/profile") {
+          router.push("/addmovies");
+        } else if (
+          role === "user" &&
+          !sessionId &&
+          pathName !== "/profile" &&
+          (pathName === "/" || pathName === "/login")
+        ) {
+          router.push("/viewmovie");
+        } else if (pathName === "/profile") {
+          router.push("/profile");
+        }
       }
-    } 
-    // else if (router.pathname !== "/login") {
-    //   // Redirect to login if not logged in
-    //   router.push("/login");
-    // }
-  }, [fetchMoviesAndUsers, fetchRole, isLoggedIn, router.pathname]);
+      
+    };
+  
+    initialize();
+  }, [ sessionId,fetchMoviesAndUsers, fetchRole, isLoggedIn]);
+  
 
   const contextValue = useMemo(
     () => ({

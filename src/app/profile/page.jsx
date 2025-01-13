@@ -1,14 +1,16 @@
 "use client";
 
 import React, { useEffect, useContext } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter ,notFound,usePathname} from "next/navigation";
 import UserContext from "../context/UserContext";
 
 const Profile = () => {
   const { isLoggedIn, fetchRole, profileData } = useContext(UserContext);
   const router = useRouter();
-
+const pathName=usePathname()
   useEffect(() => {
+    if(pathName!='/profile')
+      notFound()
     if (isLoggedIn) {
       fetchRole(localStorage.getItem("authToken"));
     } else {

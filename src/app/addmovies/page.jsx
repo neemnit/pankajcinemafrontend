@@ -1,6 +1,7 @@
-"use client"
+"use client";
 import React, { useState, useContext } from "react";
 import UserContext from "../context/UserContext";
+import { toast } from "react-toastify";
 
 const MovieForm = () => {
   const { setMovies, movies } = useContext(UserContext); // Assuming `setMovies` updates the movie list.
@@ -46,24 +47,33 @@ const MovieForm = () => {
         movieData.append("image", data.image);
       }
 
-      const response = await fetch("http://localhost:4000/addMovie", {
-        method: "POST",
-        headers: { Authorization: `Bearer ${token}` },
-        body: movieData,
-      });
+      const response = await fetch(
+        "https://pankajcinemabackend-1.onrender.com/addMovie",
+        {
+          method: "POST",
+          headers: { Authorization: `Bearer ${token}` },
+          body: movieData,
+        }
+      );
 
       if (!response.ok) {
         throw new Error("Failed to add movie");
       }
 
       const result = await response.json();
-      alert("Movie added successfully!");
+      toast.success("Movie added successfully!");
 
       // Assuming `result` is the newly created movie object
       setMovies((prevMovies) => [...prevMovies, result]);
 
       // Reset form after successful submission
-      setFormData({ name: "", ticketPrice: "", description: "", releaseDate: "", image: null });
+      setFormData({
+        name: "",
+        ticketPrice: "",
+        description: "",
+        releaseDate: "",
+        image: null,
+      });
     } catch (error) {
       console.error("Error adding movie:", error);
       alert(`Failed to add movie: ${error}`);
@@ -166,7 +176,11 @@ const MovieForm = () => {
         <button
           type="submit"
           disabled={isSubmitting}
-          className={`w-full p-2 text-white rounded-md ${isSubmitting ? "bg-gray-400 cursor-not-allowed" : "bg-blue-500 hover:bg-blue-600"}`}
+          className={`w-full p-2 text-white rounded-md ${
+            isSubmitting
+              ? "bg-gray-400 cursor-not-allowed"
+              : "bg-blue-500 hover:bg-blue-600"
+          }`}
         >
           {isSubmitting ? "Submitting..." : "Submit"}
         </button>
