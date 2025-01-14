@@ -33,7 +33,7 @@ export default function Home() {
 
   const handleSubmit = async (values, { setErrors, setSubmitting }) => {
     try {
-      const response = await fetch("https://pankajcinemabackend-1.onrender.com/login", {
+      const response = await fetch("https://pankajcinemabackend.onrender.com/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

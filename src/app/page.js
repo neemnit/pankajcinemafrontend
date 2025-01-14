@@ -75,7 +75,7 @@ export default function Home() {
 
   const handleSubmit = async (values, { resetForm }) => {
     try {
-      const response = await fetch("https://pankajcinemabackend-1.onrender.com/registerUser", {
+      const response = await fetch("https://pankajcinemabackend.onrender.com/registerUser", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

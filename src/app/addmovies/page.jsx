@@ -48,7 +48,7 @@ const MovieForm = () => {
       }
 
       const response = await fetch(
-        "https://pankajcinemabackend-1.onrender.com/addMovie",
+        "https://pankajcinemabackend.onrender.com/addMovie",
         {
           method: "POST",
           headers: { Authorization: `Bearer ${token}` },

@@ -19,7 +19,7 @@ const SuccessPage = () => {
       if (sessionId && userData) {
         try {
           const response = await fetch(
-            `"https://pankajcinemabackend-1.onrender.com/success?session_id=${sessionId}&user_data=${userData}`
+            `"https://pankajcinemabackend.onrender.com/success?session_id=${sessionId}&user_data=${userData}`
           );
           const data = await response.json();
 

@@ -79,7 +79,7 @@ const pathName=usePathname()
     if (confirm("Are you sure you want to delete this movie?")) {
       try {
         const response = await fetch(
-          `https://pankajcinemabackend-1.onrender.com/deleteMovie/${id}`,
+          `https://pankajcinemabackend.onrender.com/deleteMovie/${id}`,
           {
             method: "DELETE",
             headers: {
@@ -110,7 +110,7 @@ const pathName=usePathname()
 
   const getSeats = useCallback(async () => {
     try {
-      const response = await fetch("https://pankajcinemabackend-1.onrender.com/getSeats", {
+      const response = await fetch("https://pankajcinemabackend.onrender.com/getSeats", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -137,7 +137,7 @@ const pathName=usePathname()
 
         const updatedUsers = [...(movie?.users || []), userId]; // Ensure it's an array with the new user added
 
-        const response = await fetch(`https://pankajcinemabackend-1.onrender.com/bookMovie/${id}`, {
+        const response = await fetch(`https://pankajcinemabackend.onrender.com/bookMovie/${id}`, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
@@ -176,7 +176,7 @@ const pathName=usePathname()
 
   const fetchRole = useCallback(async (token) => {
     try {
-      const response = await fetch("https://pankajcinemabackend-1.onrender.com/profile", {
+      const response = await fetch("https://pankajcinemabackend.onrender.com/profile", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -212,8 +212,8 @@ const pathName=usePathname()
       if (!token) throw new Error("Authorization token not found.");
 
       const [usersResponse, moviesResponse] = await Promise.all([
-        fetch("https://pankajcinemabackend-1.onrender.com/getAllUsers"),
-        fetch("https://pankajcinemabackend-1.onrender.com/getMovies", {
+        fetch("/getAllUsers"),
+        fetch("https://pankajcinemabackend.onrender.com/getMovies", {
           headers: { Authorization: `Bearer ${token}` },
         }),
       ]);
