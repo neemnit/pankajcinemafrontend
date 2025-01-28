@@ -3,10 +3,11 @@
 import { useEffect, useState, useRef, useContext } from "react";
 import { jsPDF } from "jspdf";
 import html2canvas from "html2canvas";
+import axios from "../../config/axios";
 import UserContext from "../context/UserContext";
 
 const SuccessPage = () => {
-  const{getSeats}=useContext(UserContext)
+  const { getSeats } = useContext(UserContext);
   const [paymentData, setPaymentData] = useState(null);
   const ticketRef = useRef(null);
 
@@ -18,17 +19,15 @@ const SuccessPage = () => {
 
       if (sessionId && userData) {
         try {
-          const response = await fetch(
-            `"https://pankajcinemabackend.onrender.com/success?session_id=${sessionId}&user_data=${userData}`
+          const response = await axios.get(
+            `/success?session_id=${sessionId}&user_data=${userData}`
           );
-          const data = await response.json();
 
-          if (response.ok) {
-            setPaymentData(data); // Store data in state
-            getSeats()
-            
+          if (response.status === 200) {
+            setPaymentData(response.data); // Store data in state
+            getSeats();
           } else {
-            console.error("Error:", data.error);
+            console.error("Error:", response.data.error);
           }
         } catch (error) {
           console.error("Error fetching payment success data:", error);
@@ -79,15 +78,18 @@ const SuccessPage = () => {
               <strong>Show Time:</strong> {paymentData?.seatData?.showTime}
             </p>
             <p>
-              <strong>Seats:</strong> {paymentData?.seatData?.seats
+              <strong>Seats:</strong>{" "}
+              {paymentData?.seatData?.seats
                 ?.map((seat) => `${seat.row}-${seat.seatNumber}`)
                 .join(", ")}
             </p>
             <p>
-              <strong>Total Tickets:</strong> {paymentData?.seatData?.seats?.length}
+              <strong>Total Tickets:</strong>{" "}
+              {paymentData?.seatData?.seats?.length}
             </p>
             <p>
-              <strong>Total Amount:</strong> ₹{(
+              <strong>Total Amount:</strong> ₹
+              {(
                 paymentData?.seatData?.seats[0]?.price *
                 paymentData?.seatData?.seats.length
               ).toLocaleString()}

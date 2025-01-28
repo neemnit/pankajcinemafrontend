@@ -5,6 +5,7 @@ import * as Yup from "yup";
 import Image from "next/image";
 import { useContext, useEffect, useState } from "react";
 import Link from "next/link";
+import axios from "../config/axios";
 
 import UserContext from "./context/UserContext";
 import { useRouter } from "next/navigation";
@@ -12,7 +13,7 @@ import { useRouter } from "next/navigation";
 export default function Home() {
   const router = useRouter();
   const [isPassword, setIsPassword] = useState(true);
-  const { checkUnique, addUser, isLoggedIn, roleType } = useContext(UserContext);
+  const { checkUnique, addUser, isLoggedIn } = useContext(UserContext);
 
   const initialValues = {
     name: "",
@@ -33,7 +34,7 @@ export default function Home() {
       )
       .trim()
       .min(3, "Name must contain at least 3 letters.")
-      .max(17,"name should not longer than 17 characters")
+      .max(17, "Name should not be longer than 17 characters.")
       .required("Name is required"),
 
     email: Yup.string()
@@ -41,7 +42,7 @@ export default function Home() {
       .required("Email is required")
       .test(
         "is-unique",
-        "Email already exist",
+        "Email already exists",
         async (value) => {
           if (!value) return true; // Skip validation if the value is empty
           return await checkUnique(value); // Async validation
@@ -67,35 +68,20 @@ export default function Home() {
   });
 
   useEffect(() => {
-    // You can add logic here if needed
-    
-    
-
+    // Logic can be added here if required
   }, []);
 
   const handleSubmit = async (values, { resetForm }) => {
     try {
-      const response = await fetch("https://pankajcinemabackend.onrender.com/registerUser", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(values),
-      });
+      const response = await axios.post("/registerUser", values);
 
-      if (!response.ok) {
-        console.log(response)
-       // throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-
-      const result = await response.json();
-      alert(result.message);
-      addUser(result.user);
+      alert(response.data.message);
+      addUser(response.data.user);
       resetForm();
-      router.push('/login');
+      router.push("/login");
     } catch (error) {
-      console.log(error,"yaha")
-      alert(error?.error);
+      console.error("Error:", error);
+      alert(error.response?.data?.error || "An error occurred");
     }
   };
 
@@ -109,7 +95,6 @@ export default function Home() {
             width={40}
             alt="reel"
             className="absolute left-14"
-            
           />
           <p className="text-3xl font-bold mb-4 text-red-700 grow">
             Register Yourself
@@ -163,7 +148,7 @@ export default function Home() {
                   >
                     <i
                       className={`fa-regular ${isPassword ? "fa-eye-slash" : "fa-eye"}`}
-                      style={{ cursor: 'pointer' }}
+                      style={{ cursor: "pointer" }}
                     ></i>
                   </button>
                 </div>

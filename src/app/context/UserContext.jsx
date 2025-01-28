@@ -7,6 +7,7 @@ import {
   useMemo,
   useState,
 } from "react";
+import axios from "../../config/axios";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -78,18 +79,14 @@ const pathName=usePathname()
 
     if (confirm("Are you sure you want to delete this movie?")) {
       try {
-        const response = await fetch(
-          `https://pankajcinemabackend.onrender.com/deleteMovie/${id}`,
-          {
-            method: "DELETE",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${localStorage.getItem("authToken")}`,
-            },
-          }
-        );
+        const response = await axios.delete(`/deleteMovie/${id}`, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+          },
+        });
 
-        if (response.ok) {
+        if (response.status === 200) {
           setMovies((prevMovies) =>
             prevMovies.filter((movie) => movie._id !== id)
           );
@@ -97,34 +94,28 @@ const pathName=usePathname()
             className: "bg-red-500 text-white", // Tailwind classes for red background
             icon: "🗑️", // Add a delete-specific icon
           });
-        } else {
-          const errorData = await response.json();
-          toast.error(`Error deleting movie: ${errorData.message || "Unknown error"}`)
         }
       } catch (error) {
         console.error("Failed to delete movie:", error);
-        toast.error("An unexpected error occurred. Please try again later.");
+        toast.error(error.response?.data?.message || "An unexpected error occurred. Please try again later.");
       }
     }
   }, []);
 
   const getSeats = useCallback(async () => {
     try {
-      const response = await fetch("https://pankajcinemabackend.onrender.com/getSeats", {
-        method: "GET",
+      const response = await axios.get("/getSeats", {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("authToken")}`,
         },
       });
-      if (response.ok) {
-        const data = await response.json();
-        setBookedSeats(data);
-      }
+      setBookedSeats(response.data);
     } catch (error) {
       console.error("Failed to fetch booked seats:", error);
     }
   }, []);
+
   const bookMovie = useCallback(
     async (id, userId) => {
       if (!id) {
@@ -137,32 +128,27 @@ const pathName=usePathname()
 
         const updatedUsers = [...(movie?.users || []), userId]; // Ensure it's an array with the new user added
 
-        const response = await fetch(`https://pankajcinemabackend.onrender.com/bookMovie/${id}`, {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
-          },
-          body: JSON.stringify({ users: updatedUsers }), // Send the updated array
-        });
+        const response = await axios.put(`/bookMovie/${id}`,
+          { users: updatedUsers },
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+            },
+          }
+        );
 
-        if (response.ok) {
-          const updatedMovie = await response.json();
-          setMovies((prevMovies) =>
-            prevMovies.map((movie) =>
-              movie._id === updatedMovie._id ? updatedMovie : movie
-            )
-          );
+        setMovies((prevMovies) =>
+          prevMovies.map((movie) =>
+            movie._id === response.data._id ? response.data : movie
+          )
+        );
 
-          setIsModalOpen(true); // Open modal on success
-          router.push(`/bookSeats/${id}`); // Redirect to bookSeats
-        } else {
-          const errorData = await response.json();
-          toast.error(`Error booking movie: ${errorData.message || "Unknown error"}`);
-        }
+        setIsModalOpen(true); // Open modal on success
+        router.push(`/bookSeats/${id}`); // Redirect to bookSeats
       } catch (error) {
         console.error("Failed to book movie:", error);
-        toast.error("An unexpected error occurred. Please try again later.");
+        toast.error(error.response?.data?.message || "An unexpected error occurred. Please try again later.");
       }
     },
     [movies]
@@ -176,20 +162,18 @@ const pathName=usePathname()
 
   const fetchRole = useCallback(async (token) => {
     try {
-      const response = await fetch("https://pankajcinemabackend.onrender.com/profile", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await axios.post(
+        "/profile",
+        {},
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
-      if (response.ok) {
-        const data = await response.json();
-        setProfileData(data);
-      } else {
-        console.error("Failed to fetch role");
-      }
+      setProfileData(response.data);
     } catch (error) {
       console.error("Error fetching role:", error);
     }
@@ -212,21 +196,14 @@ const pathName=usePathname()
       if (!token) throw new Error("Authorization token not found.");
 
       const [usersResponse, moviesResponse] = await Promise.all([
-        fetch("/getAllUsers"),
-        fetch("https://pankajcinemabackend.onrender.com/getMovies", {
+        axios.get("/getAllUsers"),
+        axios.get("/getMovies", {
           headers: { Authorization: `Bearer ${token}` },
         }),
       ]);
 
-      if (usersResponse.ok) {
-        const usersData = await usersResponse.json();
-        setUsers(usersData);
-      }
-
-      if (moviesResponse.ok) {
-        const moviesData = await moviesResponse.json();
-        setMovies(moviesData);
-      }
+      setUsers(usersResponse.data);
+      setMovies(moviesResponse.data);
     } catch (error) {
       console.error("Error fetching movies and users:", error);
     }

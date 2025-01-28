@@ -1,7 +1,8 @@
 "use client";
 import React, { useState, useContext } from "react";
-import UserContext from "../context/UserContext";
+import axios from "../../config/axios";
 import { toast } from "react-toastify";
+import UserContext from "../context/UserContext";
 
 const MovieForm = () => {
   const { setMovies, movies } = useContext(UserContext); // Assuming `setMovies` updates the movie list.
@@ -9,62 +10,43 @@ const MovieForm = () => {
     name: "",
     ticketPrice: "",
     description: "",
-    releaseDate: "", // New field for release date
+    releaseDate: "",
     image: null,
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleFileChange = (e) => {
-    if (e.target.files?.[0]) {
-      setFormData((prev) => ({
-        ...prev,
-        image: e.target.files?.[0] || null,
-      }));
-    }
+    const file = e.target.files?.[0] || null;
+    setFormData((prev) => ({ ...prev, image: file }));
   };
 
   const addMovie = async (data) => {
     try {
       const token = localStorage.getItem("authToken");
       if (!token) {
-        throw new Error("Unauthorized: Token missing");
+        toast.error("Unauthorized: Please log in.");
+        return;
       }
 
       const movieData = new FormData();
       movieData.append("name", data.name);
       movieData.append("ticketPrice", data.ticketPrice);
       movieData.append("description", data.description);
-      movieData.append("releaseDate", data.releaseDate); // Append release date
-      if (data.image) {
-        movieData.append("image", data.image);
-      }
+      movieData.append("releaseDate", data.releaseDate);
+      if (data.image) movieData.append("image", data.image);
 
-      const response = await fetch(
-        "https://pankajcinemabackend.onrender.com/addMovie",
-        {
-          method: "POST",
-          headers: { Authorization: `Bearer ${token}` },
-          body: movieData,
-        }
-      );
+      const response = await axios.post("/addMovie", movieData, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
-      if (!response.ok) {
-        throw new Error("Failed to add movie");
-      }
-
-      const result = await response.json();
+      // Assuming `response.data` is the newly added movie object
       toast.success("Movie added successfully!");
-
-      // Assuming `result` is the newly created movie object
-      setMovies((prevMovies) => [...prevMovies, result]);
+      setMovies((prevMovies) => [...prevMovies, response.data]);
 
       // Reset form after successful submission
       setFormData({
@@ -76,7 +58,9 @@ const MovieForm = () => {
       });
     } catch (error) {
       console.error("Error adding movie:", error);
-      alert(`Failed to add movie: ${error}`);
+      toast.error(
+        error.response?.data?.message || "Failed to add movie. Please try again."
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -87,7 +71,7 @@ const MovieForm = () => {
     setIsSubmitting(true);
 
     if (!formData.image) {
-      alert("Please upload an image");
+      toast.error("Please upload an image.");
       setIsSubmitting(false);
       return;
     }

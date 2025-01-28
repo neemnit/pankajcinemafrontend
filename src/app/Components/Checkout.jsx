@@ -1,47 +1,43 @@
 "use client";
 
 import { useState } from "react";
+import axios from "../../config/axios";
 
 const Checkout = ({ data }) => {
-  
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [checkoutUrl, setCheckoutUrl] = useState("");
 
   const handleCheckout = async () => {
     try {
-      // Example data to send to the backend
-      const response = await fetch("https://pankajcinemabackend.onrender.com", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("authToken")}`,
-        },
-        body: JSON.stringify({
+      const response = await axios.post(
+        "/payment",
+        {
           showDate: data?.showDate,
           showTime: data?.showTime,
           totalSeats: data?.totalSeats,
           isFull: data?.isFull,
           movieId: data?.movieId,
-          seats:data?.seats,
+          seats: data?.seats,
           numSeatsBooked: data?.numSeatsBooked,
-        }),
-      });
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+          },
+        }
+      );
 
-      if (!response.ok) {
-        console.log(response)
-        throw new Error("Failed to create checkout session");
-      }
-
-      const responseData = await response.json(); // Changed variable name from `data` to `responseData`
+      const responseData = response.data;
       setCheckoutUrl(responseData?.url);
 
-      if (responseData.url) {
+      if (responseData?.url) {
         window.location.href = responseData.url; // Redirect to Stripe Checkout
       } else {
         console.error("No URL returned from backend");
       }
     } catch (error) {
-      console.error("Error during checkout:", error);
+      console.log("Error during checkout:", error?.response?.data || error.message);
     }
   };
 
@@ -70,34 +66,29 @@ const Checkout = ({ data }) => {
             <div className="mb-6">
               <img
                 src={data?.image}
-                alt={data.title}
+                alt={data?.title || "Movie"}
                 className="w-full h-48 object-cover rounded-lg mb-4"
               />
-              <h2 className="text-xl font-semibold mb-2">{data.title}</h2>
-              <p className="text-gray-600">{data.description}</p>
+              <h2 className="text-xl font-semibold mb-2">{data?.title}</h2>
+              <p className="text-gray-600">{data?.description}</p>
             </div>
 
             {/* Ticket Details */}
-            <div className="mb-6">
+            <div className="mb-6 space-y-2">
               <p className="text-gray-800 font-medium">
                 <strong>Price:</strong> ₹{data?.seats[0]?.price * data?.seats.length}
               </p>
               <p className="text-gray-800 font-medium">
-                <strong>Date:</strong> {data?.showDate.toString()}
+                <strong>Date:</strong> {data?.showDate?.toString()}
               </p>
               <p className="text-gray-800 font-medium">
                 <strong>Time:</strong> {data?.showTime}
               </p>
               <p className="text-gray-800 font-medium">
-                <strong>Seats:</strong> {
-                  data?.seats.map((seat ,i)=>{
-                    return <span key={i}>
-                      {
-                        seat?.row + " "+ seat?.seatNumber
-                      }
-                    </span>
-                  })
-                }
+                <strong>Seats:</strong>{" "}
+                {data?.seats
+                  ?.map((seat) => `${seat?.row}-${seat?.seatNumber}`)
+                  .join(", ")}
               </p>
             </div>
 

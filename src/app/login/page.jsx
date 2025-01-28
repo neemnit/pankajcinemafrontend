@@ -1,16 +1,17 @@
-"use client"
+"use client";
 import { useState, useContext } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import Image from "next/image";
 import Link from "next/link";
 import UserContext from "../context/UserContext";
-import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import axios from "../../config/axios";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function Home() {
   const [isPassword, setIsPassword] = useState(true);
-  const { updateLoggedIn, setRoleType ,isLoggedIn} = useContext(UserContext);
+  const { updateLoggedIn, setRoleType, isLoggedIn } = useContext(UserContext);
 
   const initialValues = {
     email: "",
@@ -33,35 +34,26 @@ export default function Home() {
 
   const handleSubmit = async (values, { setErrors, setSubmitting }) => {
     try {
-      const response = await fetch("https://pankajcinemabackend.onrender.com/login", {
-        method: "POST",
+      const response = await axios.post("/login", values, {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(values),
       });
 
-      if (!response.ok) {
-        const error = await response.json();
-
-        if (error?.error) {
-          setErrors({
-            email: error.error.includes("email") ? error.error : "",
-            password: error.error.includes("password") ? error.error : "",
-          });
-        }
-
-        throw new Error(`HTTP error! Status: ${response.status} ${error?.error}`);
-      }
-
-      const result = await response.json();
-      toast.success(result?.message);
-      localStorage.setItem("authToken", result.token);
-      localStorage.setItem("role", result?.role);
+      toast.success(response.data?.message);
+      localStorage.setItem("authToken", response.data.token);
+      localStorage.setItem("role", response.data?.role);
       updateLoggedIn(true); // Update login status
-      setRoleType(result?.role);
+      setRoleType(response.data?.role);
     } catch (error) {
-      alert(error);
+      if (error.response?.data?.error) {
+        const errorMessage = error.response.data.error;
+        setErrors({
+          email: errorMessage.includes("email") ? errorMessage : "",
+          password: errorMessage.includes("password") ? errorMessage : "",
+        });
+      }
+      toast.error(error.response?.data?.error || "An unexpected error occurred.");
     } finally {
       setSubmitting(false); // Re-enable the submit button after submission
     }
@@ -76,7 +68,6 @@ export default function Home() {
           width={40}
           alt="reel"
           className="absolute left-28"
-        
           style={{ width: "auto", height: "auto" }}
         />
         <p className="text-3xl font-bold mb-4 text-red-700 grow">Login</p>
@@ -89,7 +80,6 @@ export default function Home() {
       >
         {({ isSubmitting }) => (
           <Form className="space-y-6">
-            {/* Email Field */}
             <div className="flex flex-col space-y-2">
               <div className="flex flex-row items-center relative space-x-2">
                 <label
@@ -109,7 +99,6 @@ export default function Home() {
               <ErrorMessage name="email" component="div" className="text-red-500 text-sm" />
             </div>
 
-            {/* Password Field */}
             <div className="flex flex-col space-y-2">
               <div className="flex flex-row items-center relative space-x-2">
                 <label
@@ -139,7 +128,6 @@ export default function Home() {
               <ErrorMessage name="password" component="div" className="text-red-500 text-sm" />
             </div>
 
-            {/* Submit Button */}
             <button
               className="bg-gradient-to-r from-purple-500 to-purple-700 text-white py-2 px-6 rounded-lg shadow-md hover:bg-gradient-to-r hover:from-purple-400 hover:to-purple-600 transition-all duration-300"
               type="submit"
