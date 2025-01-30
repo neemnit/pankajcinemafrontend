@@ -139,7 +139,7 @@ export default function Home() {
             </button>
 
             <div className="text-center text-sm text-gray-600 mt-4">
-              Don’t have an account? <Link href="/register" className="text-blue-600 hover:underline">Register here</Link>
+              Don’t have an account? <Link href="/" className="text-blue-600 hover:underline">Register here</Link>
             </div>
           </Form>
         )}

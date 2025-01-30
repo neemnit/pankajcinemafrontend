@@ -38,48 +38,8 @@ const Page = () => {
   const rows = 10;
   const cols = 10;
 
+  // Fetch movie details
   useEffect(() => {
-    const generatedSeats = Array.from({ length: rows }, (_, rowIndex) =>
-      Array.from({ length: cols }, (_, colIndex) => ({
-        row: String.fromCharCode(65 + rowIndex),
-        seatNumber: colIndex + 1,
-        isBooked: false,
-        price: movieDetails?.ticketPrice || 200,
-        bookedBy: null,
-      }))
-    ).flat();
-    setSeats(generatedSeats);
-
-    const bookSeatData = bookedSeats.filter(
-      (seat) =>
-        seat?.showDate === selectedDate?.toISOString() &&
-        seat?.showTime === selectedTime &&
-        seat?.movieId === id
-    );
-
-    setSeats((prevSeats) =>
-      prevSeats.map((seat) => {
-        const bookedSeat = bookSeatData.find((booked) =>
-          booked.seats.some(
-            (bookedSeat) =>
-              bookedSeat.seatNumber === seat.seatNumber &&
-              bookedSeat.row === seat.row
-          )
-        );
-
-        if (bookedSeat) {
-          const matchingSeat = bookedSeat.seats.find(
-            (bookedSeat) =>
-              bookedSeat.seatNumber === seat.seatNumber &&
-              bookedSeat.row === seat.row
-          );
-          return { ...seat, isBooked: true, bookedBy: matchingSeat.bookedBy };
-        }
-
-        return seat;
-      })
-    );
-
     if (movies && id) {
       const data = movies.find((movie) => movie._id === id);
       if (data) {
@@ -87,11 +47,62 @@ const Page = () => {
         setSelectedDate(new Date(data.releaseDate));
       }
     }
+  }, [movies, id]);
 
-    getSeats();
-    if (pathname.includes("/bookSeats/" + id)) router.push(pathname);
-    else router.push("/viewmovie");
-  }, []);
+  // Generate seats on movie load
+  useEffect(() => {
+    const generatedSeats = Array.from({ length: rows }, (_, rowIndex) =>
+      Array.from({ length: cols }, (_, colIndex) => ({
+        row: String.fromCharCode(65 + rowIndex),
+        seatNumber: colIndex + 1,
+        isBooked: false,
+        price: movieDetails?.ticketPrice || 200,
+      }))
+    ).flat();
+    setSeats(generatedSeats);
+  }, [movieDetails]);
+
+  // Fetch and update seats based on selected date and time
+  useEffect(() => {
+    if (selectedDate && selectedTime) {
+      getSeats(); // Fetch booked seats from the server
+    }
+  }, [selectedDate, selectedTime, getSeats]);
+
+  // Update seat booking status based on booked seats
+  useEffect(() => {
+    if (selectedDate && selectedTime && bookedSeats.length > 0) {
+      
+  
+      // Fix: Convert selectedDate to local YYYY-MM-DD format
+      const localDate = selectedDate.toLocaleDateString("en-CA"); // Format: YYYY-MM-DD
+      
+  
+      // Compare seat.showDate (also convert to YYYY-MM-DD format)
+      const bookedSeatData = bookedSeats.filter((seat) => {
+        const seatDate = new Date(seat.showDate); // Make sure showDate is a Date object
+        const formattedSeatDate = seatDate.toLocaleDateString("en-CA"); // Format seat.showDate to YYYY-MM-DD
+        return (
+          formattedSeatDate === localDate && // Compare with local date
+          seat.showTime === selectedTime &&
+          seat.movieId === id
+        );
+      });
+  
+      console.log(bookedSeatData);
+  
+      setSeats((prevSeats) =>
+        prevSeats.map((seat) => {
+          const isBooked = bookedSeatData.some((booked) =>
+            booked.seats.some((s) => s.seatNumber === seat.seatNumber && s.row === seat.row)
+          );
+          return { ...seat, isBooked };
+        })
+      );
+    }
+  }, [bookedSeats, selectedDate, selectedTime, id]);
+  
+  
 
   const handleSeatClick = (seat) => {
     if (!seat.isBooked) {
@@ -117,10 +128,8 @@ const Page = () => {
     numSeatsBooked: [{ userId: profileData._id, seatsBooked: selectedSeats.length }],
   });
 
-  // Enable the button only if the user has selected all the tickets they initially chose
   const isBookingEnabled = selectedDate && selectedTime && selectedSeats.length === ticketCount;
 
-  // Vehicle images array
   const vehicleImages = {
     1: "/images/bycle.webp",
     2: "/images/scooter.webp",
@@ -138,7 +147,6 @@ const Page = () => {
     <div className="container mx-auto p-4">
       {/* YouTube Video with Background Image */}
       <div className="relative w-full h-60 rounded-lg shadow-lg overflow-hidden">
-        {/* Background Image */}
         <Image
           src={movieDetails?.image?.url || "/images/default-placeholder.png"}
           alt={movieDetails?.name || "Movie Image"}
@@ -146,8 +154,6 @@ const Page = () => {
           objectFit="cover"
           className="z-0"
         />
-
-        {/* YouTube Video */}
         <div className="absolute inset-0 flex items-center justify-center z-10">
           <iframe
             width="80%"
@@ -168,7 +174,6 @@ const Page = () => {
         <div className="w-full md:w-1/3 p-4 bg-white shadow-md rounded-lg">
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-lg font-semibold">Select Date</h3>
-            {/* Edit Tickets Button */}
             <button
               onClick={() => setIsModalOpen(true)}
               className="flex items-center text-sm text-blue-500 hover:text-blue-700"
@@ -232,7 +237,7 @@ const Page = () => {
                           key={index}
                           className={`w-6 h-6 flex items-center justify-center rounded-md text-white font-bold cursor-pointer ${
                             seat.isBooked
-                              ? "bg-gray-300"
+                              ? "bg-gray-300 cursor-not-allowed"
                               : selectedSeats.includes(seat)
                               ? "bg-blue-500 hover:bg-blue-600"
                               : "border border-green-700 hover:bg-green-600"
@@ -240,8 +245,8 @@ const Page = () => {
                           onClick={() => handleSeatClick(seat)}
                         >
                           <span
-                            className={`text-green-500 hover:text-white ${
-                              seat?.isBooked ? "cursor-not-allowed opacity-50" : ""
+                            className={`${
+                              seat.isBooked ? "text-gray-500" : "text-green-500 hover:text-white"
                             }`}
                           >
                             {seat.seatNumber}
@@ -281,7 +286,7 @@ const Page = () => {
             <div className="mb-4">
               <h3 className="text-sm font-medium text-gray-700">Your Ride</h3>
               <Image
-                src={vehicleImages[ticketCount]} // Use the vehicleImages array
+                src={vehicleImages[ticketCount]}
                 alt={`Vehicle for ${ticketCount} tickets`}
                 width={80}
                 height={80}
@@ -322,19 +327,12 @@ const Page = () => {
       {/* Stripe Payment Modal */}
       {isModalOpen && selectedDate && selectedTime && ticketCount > 0 && (
         <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-xl p-6 w-full md:w-1/2">
+          
             <Elements stripe={stripePromise}>
               <Checkout data={handleSeatDetail()} />
             </Elements>
-            <div className="flex justify-end mt-4">
-              <button
-                className="px-4 py-2 bg-gray-300 text-gray-700 rounded mr-2"
-                onClick={() => setIsModalOpen(!isModalOpen)}
-              >
-                Close
-              </button>
-            </div>
-          </div>
+            
+          
         </div>
       )}
     </div>
