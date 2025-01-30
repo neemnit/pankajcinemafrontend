@@ -85,8 +85,9 @@ const pathName=usePathname()
             Authorization: `Bearer ${localStorage.getItem("authToken")}`,
           },
         });
+        
 
-        if (response.status === 200) {
+        if (response.status === 202) {
           setMovies((prevMovies) =>
             prevMovies.filter((movie) => movie._id !== id)
           );

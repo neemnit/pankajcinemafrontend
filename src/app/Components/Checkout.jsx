@@ -43,15 +43,9 @@ const Checkout = ({ data }) => {
 
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">Stripe Checkout</h1>
-      <button
-        onClick={() => setIsModalOpen(true)}
-        className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-      >
-        Book Tickets
-      </button>
+      
 
-      {isModalOpen && (
+      
         <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg shadow-lg w-1/3 p-6 relative">
             {/* Close button */}
@@ -101,7 +95,7 @@ const Checkout = ({ data }) => {
             </button>
           </div>
         </div>
-      )}
+    
     </div>
   );
 };

@@ -60,17 +60,16 @@ export default function Home() {
   };
 
   return (
-    <div className="bg-gradient-to-r from-purple-300  via-pink-200 to-red-200 opacity-90 h-auto shadow-2xl hover:shadow-xl w-[34rem] rounded-3xl text-center mx-auto z-20 mt-5 border-4 border-slate-800 p-4">
-      <div className="flex flex-row relative">
+    <div className="bg-gradient-to-br from-blue-50 to-blue-100 h-auto shadow-lg w-full max-w-md rounded-lg mx-auto mt-10 p-6 border border-gray-300 sm:px-10 md:w-2/3 lg:w-1/2">
+      <div className="flex flex-col items-center mb-6">
         <Image
-          src={"/images/login.webp"}
-          height={30}
-          width={40}
-          alt="reel"
-          className="absolute left-28"
-          style={{ width: "auto", height: "auto" }}
+          src="/images/login.webp"
+          height={80}
+          width={80}
+          alt="Login Icon"
+          className="mb-4"
         />
-        <p className="text-3xl font-bold mb-4 text-red-700 grow">Login</p>
+        <h1 className="text-2xl font-bold text-gray-700">Login</h1>
       </div>
 
       <Formik
@@ -79,69 +78,69 @@ export default function Home() {
         onSubmit={handleSubmit}
       >
         {({ isSubmitting }) => (
-          <Form className="space-y-6">
-            <div className="flex flex-col space-y-2">
-              <div className="flex flex-row items-center relative space-x-2">
-                <label
-                  className="text-black tracking-wider font-serif pr-8 grow text-2xl after:content-['*'] after:text-red-500 after:align-super"
-                  htmlFor="email"
-                >
-                  Email:
-                </label>
-                <Field
-                  type="email"
-                  id="email"
-                  name="email"
-                  className="px-2 border-none outline-none w-80 rounded-2xl h-10 focus:shadow-lg focus:shadow-blue-500 focus:ring-2 focus:ring-blue-400 transition-all duration-300"
-                />
-                <i className="fa-solid fa-envelope absolute right-2"></i>
-              </div>
-              <ErrorMessage name="email" component="div" className="text-red-500 text-sm" />
+          <Form className="space-y-4">
+            <div className="flex flex-col">
+              <label
+                className="text-gray-600 font-medium text-sm mb-1"
+                htmlFor="email"
+              >
+                Email Address
+              </label>
+              <Field
+                type="email"
+                id="email"
+                name="email"
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring focus:ring-blue-200 focus:border-blue-400 transition"
+              />
+              <ErrorMessage
+                name="email"
+                component="div"
+                className="text-red-500 text-sm mt-1"
+              />
             </div>
 
-            <div className="flex flex-col space-y-2">
-              <div className="flex flex-row items-center relative space-x-2">
-                <label
-                  className="text-black tracking-wider font-serif pr-8 grow text-2xl after:content-['*'] after:text-red-500 after:align-super"
-                  htmlFor="password"
-                >
-                  Password:
-                </label>
+            <div className="flex flex-col">
+              <label
+                className="text-gray-600 font-medium text-sm mb-1"
+                htmlFor="password"
+              >
+                Password
+              </label>
+              <div className="relative">
                 <Field
                   type={isPassword ? "password" : "text"}
                   id="password"
                   name="password"
-                  className="px-2 border-none outline-none w-80 rounded-2xl h-10 focus:shadow-lg focus:shadow-blue-500 focus:ring-2 focus:ring-blue-400 transition-all duration-300"
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring focus:ring-blue-200 focus:border-blue-400 transition"
                 />
                 <button
-                  className="absolute right-2"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setIsPassword(!isPassword);
-                  }}
+                  type="button"
+                  onClick={() => setIsPassword(!isPassword)}
+                  className="absolute top-2 right-3 text-gray-600 hover:text-gray-800"
                 >
                   <i
-                    className={`fa-regular ${isPassword ? "fa-eye-slash" : "fa-eye"} cursor-pointer`}
+                    className={`fa-regular ${isPassword ? "fa-eye-slash" : "fa-eye"}`}
                   ></i>
                 </button>
               </div>
-              <ErrorMessage name="password" component="div" className="text-red-500 text-sm" />
+              <ErrorMessage
+                name="password"
+                component="div"
+                className="text-red-500 text-sm mt-1"
+              />
             </div>
 
             <button
-              className="bg-gradient-to-r from-purple-500 to-purple-700 text-white py-2 px-6 rounded-lg shadow-md hover:bg-gradient-to-r hover:from-purple-400 hover:to-purple-600 transition-all duration-300"
               type="submit"
               disabled={isSubmitting}
+              className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-500 transition disabled:bg-gray-400"
             >
-              {isSubmitting ? "Submitting..." : "Submit"}
+              {isSubmitting ? "Logging in..." : "Login"}
             </button>
 
-            <span className="absolute right-auto text-sm pl-0.5">
-              Not loggedIn?{" "}
-              <Link href={"/"} className="text-blue-800">
-                first register here
-              </Link>
-            </span>
+            <div className="text-center text-sm text-gray-600 mt-4">
+              Don’t have an account? <Link href="/register" className="text-blue-600 hover:underline">Register here</Link>
+            </div>
           </Form>
         )}
       </Formik>

@@ -3,10 +3,9 @@
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import Image from "next/image";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import Link from "next/link";
 import axios from "../config/axios";
-
 import UserContext from "./context/UserContext";
 import { useRouter } from "next/navigation";
 
@@ -24,14 +23,8 @@ export default function Home() {
 
   const validationSchema = Yup.object({
     name: Yup.string()
-      .matches(
-        /^(?!.*([a-zA-Z])\1{2}).*$/i,
-        "No three consecutive identical letters."
-      )
-      .matches(
-        /^[a-zA-Z]+(\s[a-zA-Z]+)*$/,
-        "Name must contain only alphabetic letters and spaces between words."
-      )
+      .matches(/^(?!.*([a-zA-Z])\1{2}).*$/i, "No three consecutive identical letters.")
+      .matches(/^[a-zA-Z]+(\s[a-zA-Z]+)*$/, "Name must contain only alphabetic letters and spaces between words.")
       .trim()
       .min(3, "Name must contain at least 3 letters.")
       .max(17, "Name should not be longer than 17 characters.")
@@ -40,14 +33,10 @@ export default function Home() {
     email: Yup.string()
       .email("Invalid email address")
       .required("Email is required")
-      .test(
-        "is-unique",
-        "Email already exists",
-        async (value) => {
-          if (!value) return true; // Skip validation if the value is empty
-          return await checkUnique(value); // Async validation
-        }
-      ),
+      .test("is-unique", "Email already exists", async (value) => {
+        if (!value) return true;
+        return await checkUnique(value);
+      }),
 
     password: Yup.string()
       .min(8, "Password must be at least 8 characters")
@@ -57,24 +46,15 @@ export default function Home() {
     adharNo: Yup.string()
       .matches(/^\d{16}$/, "Aadhaar Card must be exactly 16 digits")
       .required("Aadhaar Card is required")
-      .test(
-        "is-unique",
-        "Aadhaar Card number already exists",
-        async (value) => {
-          if (!value) return true; // Skip validation if the value is empty
-          return await checkUnique(value); // Async validation
-        }
-      ),
+      .test("is-unique", "Aadhaar Card number already exists", async (value) => {
+        if (!value) return true;
+        return await checkUnique(value);
+      }),
   });
-
-  useEffect(() => {
-    // Logic can be added here if required
-  }, []);
 
   const handleSubmit = async (values, { resetForm }) => {
     try {
       const response = await axios.post("/registerUser", values);
-
       alert(response.data.message);
       addUser(response.data.user);
       resetForm();
@@ -87,97 +67,28 @@ export default function Home() {
 
   return (
     !isLoggedIn && (
-      <div className="bg-gradient-to-r from-purple-300 via-pink-200 to-red-200 opacity-90 h-auto shadow-2xl hover:shadow-xl w-[34rem] rounded-3xl text-center mx-auto z-20 mt-5 border-4 border-slate-800 p-4">
-        <div className="flex flex-row relative">
-          <Image
-            src={"/images/register.webp"}
-            height={30}
-            width={40}
-            alt="reel"
-            className="absolute left-14"
-          />
-          <p className="text-3xl font-bold mb-4 text-red-700 grow">
-            Register Yourself
-          </p>
+      <div className="bg-gradient-to-r from-purple-300 via-pink-200 to-red-200 opacity-90 max-w-md mx-auto rounded-lg text-center p-4 shadow-md border border-gray-300">
+        <div className="flex justify-center mb-3">
+          <Image src="/images/register.webp" height={30} width={30} alt="Register" />
         </div>
-
-        <Formik
-          initialValues={initialValues}
-          validationSchema={validationSchema}
-          onSubmit={handleSubmit}
-        >
+        <h2 className="text-lg font-semibold text-gray-700">Register Yourself</h2>
+        <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={handleSubmit}>
           {({ isSubmitting }) => (
-            <Form className="space-y-6">
-              {/* Name Field */}
-              <FieldWithError
-                name="name"
-                label="Name:"
-                type="text"
-                icon="fa-user"
-              />
-
-              {/* Email Field */}
-              <FieldWithError
-                name="email"
-                label="Email:"
-                type="email"
-                icon="fa-envelope"
-              />
-
-              {/* Password Field */}
-              <div className="flex flex-col space-y-2">
-                <div className="flex flex-row items-center relative space-x-2">
-                  <label
-                    className="text-black tracking-wider font-serif pr-8 grow text-2xl after:content-['*'] after:text-red-500 after:align-super"
-                    htmlFor="password"
-                  >
-                    Password:
-                  </label>
-                  <Field
-                    type={isPassword ? "password" : "text"}
-                    id="password"
-                    name="password"
-                    className="px-2 border-none outline-none w-80 rounded-2xl h-10 focus:shadow-lg focus:shadow-blue-500 focus:ring-2 focus:ring-blue-400 transition-all duration-300"
-                  />
-                  <button
-                    className="absolute right-2"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      setIsPassword(!isPassword);
-                    }}
-                  >
-                    <i
-                      className={`fa-regular ${isPassword ? "fa-eye-slash" : "fa-eye"}`}
-                      style={{ cursor: "pointer" }}
-                    ></i>
-                  </button>
-                </div>
-                <ErrorMessage
-                  name="password"
-                  component="div"
-                  className="text-red-500 text-sm"
-                />
-              </div>
-
-              {/* Aadhaar Card Field */}
-              <FieldWithError
-                name="adharNo"
-                label="Aadhaar Card:"
-                type="text"
-                icon="/images/adhar.webp"
-              />
-
-              {/* Submit Button */}
+            <Form className="space-y-2 mt-3">
+              <FieldWithError name="name" label="Name" type="text" />
+              <FieldWithError name="email" label="Email" type="email" />
+              <PasswordField name="password" isPassword={isPassword} setIsPassword={setIsPassword} />
+              <FieldWithError name="adharNo" label="Aadhaar Card" type="text" />
               <button
-                className="bg-gradient-to-r from-purple-500 to-purple-700 text-white py-2 px-6 rounded-lg shadow-md hover:bg-gradient-to-r hover:from-purple-400 hover:to-purple-600 transition-all duration-300"
+                className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition"
                 type="submit"
                 disabled={isSubmitting}
               >
                 Submit
               </button>
-              <span className="absolute right-auto text-sm">
-                Already registered? <Link href={"/login"} className="text-blue-800">Go to Login</Link>
-              </span>
+              <p className="text-center text-xs">
+                Already registered? <Link href="/login" className="text-blue-600">Go to Login</Link>
+              </p>
             </Form>
           )}
         </Formik>
@@ -186,29 +97,41 @@ export default function Home() {
   );
 }
 
-function FieldWithError({ name, label, type, icon }) {
+function FieldWithError({ name, label, type }) {
   return (
-    <div className="flex flex-col space-y-2">
-      <div className="flex flex-row items-center space-x-2 relative">
-        <label
-          className="text-black tracking-tight font-serif grow text-2xl after:content-['*'] after:text-red-500 after:align-super"
-          htmlFor={name}
-        >
-          {label}
-        </label>
+    <div>
+      <label className="block text-gray-700 font-medium text-xs" htmlFor={name}>{label}</label>
+      <Field
+        type={type}
+        id={name}
+        name={name}
+        className="mt-1 p-1 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 outline-none"
+      />
+      <ErrorMessage name={name} component="div" className="text-red-500 text-xs" />
+    </div>
+  );
+}
+
+function PasswordField({ name, isPassword, setIsPassword }) {
+  return (
+    <div>
+      <label className="block text-gray-700 font-medium text-xs" htmlFor={name}>Password</label>
+      <div className="relative">
         <Field
-          type={type}
+          type={isPassword ? "password" : "text"}
           id={name}
           name={name}
-          className="px-2 border-none outline-none w-80 rounded-2xl h-10 focus:shadow-lg focus:shadow-blue-500 focus:ring-2 focus:ring-blue-400 transition-all duration-300"
+          className="mt-1 p-1 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 outline-none"
         />
-        {icon && <i className={`fa ${icon} absolute right-2`} />}
+        <button
+          type="button"
+          className="absolute right-2 top-2 text-gray-600 text-xs"
+          onClick={() => setIsPassword(!isPassword)}
+        >
+          {isPassword ? "👁️" : "🙈"}
+        </button>
       </div>
-      <ErrorMessage
-        name={name}
-        component="div"
-        className="text-red-500 text-sm"
-      />
+      <ErrorMessage name={name} component="div" className="text-red-500 text-xs" />
     </div>
   );
 }

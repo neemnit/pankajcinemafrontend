@@ -40,7 +40,7 @@ const Header = React.memo(() => {
           </button>
         </li>
         <li>
-          <Link href="/view-users" className="text-white">
+          <Link href="/viewusers" className="text-white">
             View Users
           </Link>
         </li>
@@ -114,13 +114,13 @@ const Header = React.memo(() => {
   };
 
   return (
-    <div className={`bg-slate-600 h-20 w-full flex items-center px-6 `}>
+    <div className={`bg-slate-600 h-20 w-full flex items-center px-6`}>
       <ul className="flex w-full items-center justify-between list-none">
         {isLoggedIn ? (
           <>{roleType === "admin" ? <AdminLinks /> : <UserLinks />}</>
         ) : (
           <>
-            <li className="text-3xl text-white font-sans ">
+            <li className="text-white font-sans text-sm md:text-3xl">
               Welcome to Pankaj Hall
             </li>
             <li>
@@ -129,7 +129,7 @@ const Header = React.memo(() => {
                 alt="Reel"
                 width={60}
                 height={40}
-                className="shadow-sm h-16 w-[32rem] object-contain"
+                className="shadow-sm h-12 md:h-16 w-[10rem] md:w-[32rem] object-contain"
               />
             </li>
             <li>
