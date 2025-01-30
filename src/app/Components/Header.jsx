@@ -114,24 +114,29 @@ const Header = React.memo(() => {
   };
 
   return (
-    <div className={`bg-slate-600 h-20 w-full flex items-center px-6`}>
+    <div className="bg-slate-600 h-20 w-full flex items-center px-6">
       <ul className="flex w-full items-center justify-between list-none">
         {isLoggedIn ? (
           <>{roleType === "admin" ? <AdminLinks /> : <UserLinks />}</>
         ) : (
           <>
-            <li className="text-white font-sans text-sm md:text-3xl">
+            {/* Welcome Text with responsiveness */}
+            <li className="text-white font-sans text-[16px] sm:text-[20px] md:text-[24px] lg:text-[30px] text-center">
               Welcome to Pankaj Hall
             </li>
-            <li>
+
+            {/* Image with responsiveness */}
+            <li className="hidden md:block">
               <Image
                 src="/images/agla.webp"
                 alt="Reel"
                 width={60}
                 height={40}
-                className="shadow-sm h-12 md:h-16 w-[10rem] md:w-[32rem] object-contain"
+                className="shadow-sm h-12 md:h-16 w-[10rem] lg:w-[15rem] object-contain"
               />
             </li>
+
+            {/* Login Link */}
             <li>
               <Link
                 href="/login"

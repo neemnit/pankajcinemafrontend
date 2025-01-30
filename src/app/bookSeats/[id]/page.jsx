@@ -13,7 +13,9 @@ const Page = () => {
   const pathname = usePathname();
   const router = useRouter();
 
-  const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
+  const stripePromise = loadStripe(
+    process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
+  );
 
   const { id } = useParams();
 
@@ -72,12 +74,9 @@ const Page = () => {
   // Update seat booking status based on booked seats
   useEffect(() => {
     if (selectedDate && selectedTime && bookedSeats.length > 0) {
-      
-  
       // Fix: Convert selectedDate to local YYYY-MM-DD format
       const localDate = selectedDate.toLocaleDateString("en-CA"); // Format: YYYY-MM-DD
-      
-  
+
       // Compare seat.showDate (also convert to YYYY-MM-DD format)
       const bookedSeatData = bookedSeats.filter((seat) => {
         const seatDate = new Date(seat.showDate); // Make sure showDate is a Date object
@@ -88,21 +87,21 @@ const Page = () => {
           seat.movieId === id
         );
       });
-  
-      console.log(bookedSeatData);
-  
+
+      
+
       setSeats((prevSeats) =>
         prevSeats.map((seat) => {
           const isBooked = bookedSeatData.some((booked) =>
-            booked.seats.some((s) => s.seatNumber === seat.seatNumber && s.row === seat.row)
+            booked.seats.some(
+              (s) => s.seatNumber === seat.seatNumber && s.row === seat.row
+            )
           );
           return { ...seat, isBooked };
         })
       );
     }
   }, [bookedSeats, selectedDate, selectedTime, id]);
-  
-  
 
   const handleSeatClick = (seat) => {
     if (!seat.isBooked) {
@@ -124,11 +123,17 @@ const Page = () => {
     isFull: false,
     movieId: movieDetails._id,
     image: movieDetails.image.url,
-    seats: selectedSeats.map((seat) => ({ ...seat, price: movieDetails?.ticketPrice })),
-    numSeatsBooked: [{ userId: profileData._id, seatsBooked: selectedSeats.length }],
+    seats: selectedSeats.map((seat) => ({
+      ...seat,
+      price: movieDetails?.ticketPrice,
+    })),
+    numSeatsBooked: [
+      { userId: profileData._id, seatsBooked: selectedSeats.length },
+    ],
   });
 
-  const isBookingEnabled = selectedDate && selectedTime && selectedSeats.length === ticketCount;
+  const isBookingEnabled =
+    selectedDate && selectedTime && selectedSeats.length === ticketCount;
 
   const vehicleImages = {
     1: "/images/bycle.webp",
@@ -175,7 +180,10 @@ const Page = () => {
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-lg font-semibold">Select Date</h3>
             <button
-              onClick={() => setIsModalOpen(true)}
+              onClick={() => {
+                setIsModalOpen(!isModalOpen);
+                setTicketCount(0);
+              }}
               className="flex items-center text-sm text-blue-500 hover:text-blue-700"
             >
               <svg
@@ -194,11 +202,21 @@ const Page = () => {
             selected={selectedDate}
             onSelect={setSelectedDate}
             className="mb-4"
-            month={movieDetails?.releaseDate ? new Date(movieDetails.releaseDate) : undefined}
+            month={
+              movieDetails?.releaseDate
+                ? new Date(movieDetails.releaseDate)
+                : undefined
+            }
             disabled={{
-              before: movieDetails?.releaseDate ? new Date(movieDetails.releaseDate) : undefined,
+              before: movieDetails?.releaseDate
+                ? new Date(movieDetails.releaseDate)
+                : undefined,
               after: movieDetails?.releaseDate
-                ? new Date(new Date(movieDetails.releaseDate).setDate(new Date(movieDetails.releaseDate).getDate() + 7))
+                ? new Date(
+                    new Date(movieDetails.releaseDate).setDate(
+                      new Date(movieDetails.releaseDate).getDate() + 7
+                    )
+                  )
                 : undefined,
             }}
           />
@@ -213,11 +231,13 @@ const Page = () => {
             className="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
           >
             <option value="">Select Time</option>
-            {["10:00 AM", "12:00 PM", "3:00 PM", "6:00 PM", "9:00 PM"].map((time) => (
-              <option key={time} value={time}>
-                {time}
-              </option>
-            ))}
+            {["10:00 AM", "12:00 PM", "3:00 PM", "6:00 PM", "9:00 PM"].map(
+              (time) => (
+                <option key={time} value={time}>
+                  {time}
+                </option>
+              )
+            )}
           </select>
         </div>
 
@@ -228,10 +248,15 @@ const Page = () => {
             <div className="flex flex-col gap-2">
               {Array.from({ length: rows }, (_, rowIndex) => (
                 <div key={rowIndex} className="flex items-center gap-2">
-                  <span className="w-8 text-gray-700 font-medium">{String.fromCharCode(65 + rowIndex)}</span>
+                  <span className="w-8 text-gray-700 font-medium">
+                    {String.fromCharCode(65 + rowIndex)}
+                  </span>
                   <div className="grid grid-cols-10 gap-2">
                     {seats
-                      .filter((seat) => seat.row === String.fromCharCode(65 + rowIndex))
+                      .filter(
+                        (seat) =>
+                          seat.row === String.fromCharCode(65 + rowIndex)
+                      )
                       .map((seat, index) => (
                         <div
                           key={index}
@@ -243,10 +268,13 @@ const Page = () => {
                               : "border border-green-700 hover:bg-green-600"
                           }`}
                           onClick={() => handleSeatClick(seat)}
+                          href="nitu"
                         >
                           <span
                             className={`${
-                              seat.isBooked ? "text-gray-500" : "text-green-500 hover:text-white"
+                              seat.isBooked
+                                ? "text-gray-500"
+                                : "text-green-500 hover:text-white"
                             }`}
                           >
                             {seat.seatNumber}
@@ -263,11 +291,20 @@ const Page = () => {
 
       {/* Modal for Selecting Ticket Quantity */}
       {isModalOpen && (
-        <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50" role="dialog" aria-modal="true">
+        <div
+          className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50"
+          role="dialog"
+          aria-modal="true"
+        >
           <div className="bg-white rounded-lg shadow-xl p-6 w-full md:w-1/3">
-            <h2 className="text-xl font-semibold mb-4">Select Ticket Quantity</h2>
+            <h2 className="text-xl font-semibold mb-4">
+              Select Ticket Quantity
+            </h2>
             <div className="mb-4">
-              <label htmlFor="ticketCount" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="ticketCount"
+                className="block text-sm font-medium text-gray-700"
+              >
                 Number of Tickets
               </label>
               <select
@@ -302,7 +339,10 @@ const Page = () => {
               </button>
               <button
                 className="px-4 py-2 bg-indigo-600 text-white rounded"
-                onClick={handleTicketSubmit}
+                onClick={() => {
+                  handleTicketSubmit();
+                  setIsModalOpen(false);
+                }}
               >
                 Confirm
               </button>
@@ -312,7 +352,7 @@ const Page = () => {
       )}
 
       {/* Confirm and Book Button */}
-      <div className="p-4 bg-white text-center mt-4">
+      <div className="p-4 bg-white text-center mt-4" id="nitu">
         <button
           className={`border w-full md:w-[30%] p-4 bg-[#f84464] shadow-[0 1px 8px rgba(0, 0, 0, .16)] rounded-md text-[#fff] font-semibold text-sm transition-transform transform hover:scale-95 hover:translate-y-2 ${
             !isBookingEnabled ? "opacity-50 cursor-not-allowed" : ""
@@ -325,16 +365,17 @@ const Page = () => {
       </div>
 
       {/* Stripe Payment Modal */}
-      {isModalOpen && selectedDate && selectedTime && ticketCount > 0 && (
-        <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50">
-          
+      {isModalOpen &&
+        selectedDate &&
+        selectedTime &&
+        ticketCount > 0 &&
+        selectedSeats.length && (
+          <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50">
             <Elements stripe={stripePromise}>
               <Checkout data={handleSeatDetail()} />
             </Elements>
-            
-          
-        </div>
-      )}
+          </div>
+        )}
     </div>
   );
 };
