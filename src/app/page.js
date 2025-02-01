@@ -3,7 +3,7 @@
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import Image from "next/image";
-import { useContext, useState } from "react";
+import { useContext, useState ,useEffect} from "react";
 import Link from "next/link";
 import axios from "../config/axios";
 import UserContext from "./context/UserContext";
@@ -20,14 +20,18 @@ export default function Home() {
     password: "",
     adharNo: "",
   };
-
+useEffect(()=>{
+  if(isLoggedIn){
+    router.push('/viewmovie')
+  }
+},[])
   const validationSchema = Yup.object({
     name: Yup.string()
       .matches(/^(?!.*([a-zA-Z])\1{2}).*$/i, "No three consecutive identical letters.")
       .matches(/^[a-zA-Z]+(\s[a-zA-Z]+)*$/, "Name must contain only alphabetic letters and spaces between words.")
       .trim()
       .min(3, "Name must contain at least 3 letters.")
-      .max(17, "Name should not be longer than 17 characters.")
+      .max(20, "Name should not be longer than 17 characters.")
       .required("Name is required"),
 
     email: Yup.string()
@@ -60,8 +64,8 @@ export default function Home() {
       resetForm();
       router.push("/login");
     } catch (error) {
-      console.error("Error:", error);
-      alert(error.response?.data?.error || "An error occurred");
+      
+      alert(error.response?.data.map((da)=>da) || "An error occurred");
     }
   };
 

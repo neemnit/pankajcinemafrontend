@@ -1,6 +1,6 @@
 "use client";
-import React, { useContext, useEffect, useState } from "react";
-import { useParams, usePathname, useRouter } from "next/navigation";
+import React, { useContext, useEffect, useState,useRef } from "react";
+import { useParams } from "next/navigation";
 import Image from "next/image";
 import UserContext from "../../context/UserContext";
 import { DayPicker } from "react-day-picker";
@@ -10,8 +10,10 @@ import { Elements } from "@stripe/react-stripe-js";
 import Checkout from "@/app/Components/Checkout";
 
 const Page = () => {
-  const pathname = usePathname();
-  const router = useRouter();
+  const bookButtonRef = useRef(null);
+   const timeRef=useRef(null)
+   const seatRef=useRef(null)
+  
 
   const stripePromise = loadStripe(
     process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
@@ -50,6 +52,16 @@ const Page = () => {
       }
     }
   }, [movies, id]);
+
+useEffect(() => {
+  setTimeout(() => {
+    timeRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, 200);
+}, [selectedDate]);
+
+
+
+
 
   // Generate seats on movie load
   useEffect(() => {
@@ -113,6 +125,9 @@ const Page = () => {
           ? prevSelectedSeats.filter((s) => s !== seat)
           : [...prevSelectedSeats, seat];
       });
+      setTimeout(() => {
+        bookButtonRef.current?.scrollIntoView({ behavior: "smooth" });
+      }, 200);
     }
   };
 
@@ -216,6 +231,7 @@ const Page = () => {
                     new Date(movieDetails.releaseDate).setDate(
                       new Date(movieDetails.releaseDate).getDate() + 7
                     )
+                    
                   )
                 : undefined,
             }}
@@ -223,11 +239,15 @@ const Page = () => {
         </div>
 
         {/* Time Picker */}
-        <div className="w-full md:w-1/3 p-4 bg-white shadow-md rounded-lg">
+        <div className="w-full md:w-1/3 p-4 bg-white shadow-md rounded-lg" ref={timeRef}>
           <h3 className="text-lg font-semibold mb-4">Select Time</h3>
           <select
             value={selectedTime}
-            onChange={(e) => setSelectedTime(e.target.value)}
+            onChange={(e) =>{ setSelectedTime(e.target.value)
+              setTimeout(() => {
+                 seatRef.current?.scrollIntoView({ behavior: "smooth" });
+              }, 200);
+            }}
             className="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
           >
             <option value="">Select Time</option>
@@ -243,7 +263,7 @@ const Page = () => {
 
         {/* Seat Selection */}
         {ticketCount > 0 && selectedDate && selectedTime && (
-          <div className="w-full md:flex-grow p-4 bg-white shadow-md rounded-lg">
+          <div className="w-full md:flex-grow p-4 bg-white shadow-md rounded-lg" ref={seatRef}>
             <h2 className="text-2xl font-semibold mb-4">Select Your Seats</h2>
             <div className="flex flex-col gap-2">
               {Array.from({ length: rows }, (_, rowIndex) => (
@@ -268,7 +288,7 @@ const Page = () => {
                               : "border border-green-700 hover:bg-green-600"
                           }`}
                           onClick={() => handleSeatClick(seat)}
-                          href="nitu"
+                          
                         >
                           <span
                             className={`${
@@ -352,7 +372,7 @@ const Page = () => {
       )}
 
       {/* Confirm and Book Button */}
-      <div className="p-4 bg-white text-center mt-4" id="nitu">
+      <div className="p-4 bg-white text-center mt-4" ref={bookButtonRef}>
         <button
           className={`border w-full md:w-[30%] p-4 bg-[#f84464] shadow-[0 1px 8px rgba(0, 0, 0, .16)] rounded-md text-[#fff] font-semibold text-sm transition-transform transform hover:scale-95 hover:translate-y-2 ${
             !isBookingEnabled ? "opacity-50 cursor-not-allowed" : ""

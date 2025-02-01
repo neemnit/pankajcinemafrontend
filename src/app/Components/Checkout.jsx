@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import axios from "../../config/axios";
 
-const Checkout = ({ data }) => {
+const Checkout = ({ data }) => { 
   const [isModal, setIsModal] = useState(true);
   const [checkoutUrl, setCheckoutUrl] = useState("");
   const router = useRouter();
