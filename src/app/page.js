@@ -71,7 +71,7 @@ export default function Home() {
 
   return (
     !isLoggedIn && (
-      <div className="flex justify-center items-center mt-3 ">
+      <div className="flex justify-center items-center mt-2 ">
         <div className="bg-white opacity-90 max-w-md w-full mx-4 sm:mx-10 md:mx-20 p-6 sm:p-10 rounded-lg text-center shadow-lg border border-gray-300">
           <div className="flex justify-center mb-3">
             <Image src="/images/register.webp" height={30} width={30} alt="Register" />
@@ -92,7 +92,7 @@ export default function Home() {
                 >
                   Submit
                 </button>
-                <p className="text-center text-xs">
+                <p className="text-center text-xs text-gray-500">
                   Already registered? <Link href="/login" className="text-blue-600">Go to Login</Link>
                 </p>
               </Form>

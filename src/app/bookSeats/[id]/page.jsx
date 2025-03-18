@@ -157,10 +157,10 @@ useEffect(() => {
     4: "/images/auto.webp",
     5: "/images/van.webp",
     6: "/images/bus.webp",
-    7: "/images/minibus.webp",
-    8: "/images/minibus.webp",
-    9: "https://example.com/bus.png",
-    10: "https://example.com/mini-bus.png",
+    7: "/images/7.webp",
+    8: "/images/8.webp",
+    9: "/images/9.webp",
+    10: "/images/minibus.webp",
   };
 
   return (
