@@ -1,5 +1,5 @@
 "use client";
-import React, { useContext, useEffect, useState,useRef } from "react";
+import React, { useContext, useEffect, useState, useRef } from "react";
 import { useParams } from "next/navigation";
 import Image from "next/image";
 import UserContext from "../../context/UserContext";
@@ -9,11 +9,17 @@ import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
 import Checkout from "@/app/Components/Checkout";
 
+// Add CSS for the transition effect
+const styles = `
+  .ticket-button, .time-button {
+    transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+  }
+`;
+
 const Page = () => {
   const bookButtonRef = useRef(null);
-   const timeRef=useRef(null)
-   const seatRef=useRef(null)
-  
+  const timeRef = useRef(null);
+  const seatRef = useRef(null); // Ref for the seat selection section
 
   const stripePromise = loadStripe(
     process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
@@ -53,15 +59,11 @@ const Page = () => {
     }
   }, [movies, id]);
 
-useEffect(() => {
-  setTimeout(() => {
-    timeRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, 200);
-}, [selectedDate]);
-
-
-
-
+  useEffect(() => {
+    setTimeout(() => {
+      timeRef.current?.scrollIntoView({ behavior: "smooth" });
+    }, 200);
+  }, [selectedDate]);
 
   // Generate seats on movie load
   useEffect(() => {
@@ -86,21 +88,16 @@ useEffect(() => {
   // Update seat booking status based on booked seats
   useEffect(() => {
     if (selectedDate && selectedTime && bookedSeats.length > 0) {
-      // Fix: Convert selectedDate to local YYYY-MM-DD format
       const localDate = selectedDate.toLocaleDateString("en-CA"); // Format: YYYY-MM-DD
-
-      // Compare seat.showDate (also convert to YYYY-MM-DD format)
       const bookedSeatData = bookedSeats.filter((seat) => {
-        const seatDate = new Date(seat.showDate); // Make sure showDate is a Date object
-        const formattedSeatDate = seatDate.toLocaleDateString("en-CA"); // Format seat.showDate to YYYY-MM-DD
+        const seatDate = new Date(seat.showDate);
+        const formattedSeatDate = seatDate.toLocaleDateString("en-CA");
         return (
-          formattedSeatDate === localDate && // Compare with local date
+          formattedSeatDate === localDate &&
           seat.showTime === selectedTime &&
           seat.movieId === id
         );
       });
-
-      
 
       setSeats((prevSeats) =>
         prevSeats.map((seat) => {
@@ -163,8 +160,19 @@ useEffect(() => {
     10: "/images/minibus.webp",
   };
 
+  // Function to handle time selection and scroll to seat selection
+  const handleTimeSelection = (time) => {
+    setSelectedTime(time);
+    setTimeout(() => {
+      seatRef.current?.scrollIntoView({ behavior: "smooth" });
+    }, 200); // Add a slight delay for smooth scrolling
+  };
+
   return (
     <div className="container mx-auto p-4">
+      {/* Add the CSS styles */}
+      <style>{styles}</style>
+
       {/* YouTube Video with Background Image */}
       <div className="relative w-full h-60 rounded-lg shadow-lg overflow-hidden">
         <Image
@@ -213,58 +221,68 @@ useEffect(() => {
             </button>
           </div>
           <DayPicker
-  mode="single"
-  selected={selectedDate}
-  onSelect={setSelectedDate}
-  className="mb-4 text-gray-600"
-  month={
-    movieDetails?.releaseDate
-      ? new Date(movieDetails.releaseDate)
-      : undefined
-  }
-  disabled={{
-    before: movieDetails?.releaseDate
-      ? new Date(Math.max(new Date(movieDetails.releaseDate), new Date()))
-      : new Date(), // Ensures dates before today are disabled
-    after: movieDetails?.releaseDate
-      ? new Date(
-          new Date(movieDetails.releaseDate).setDate(
-            new Date(movieDetails.releaseDate).getDate() + 7
-          )
-        )
-      : undefined,
-  }}
-/>
-
+            mode="single"
+            selected={selectedDate}
+            onSelect={setSelectedDate}
+            className="mb-4 text-gray-600"
+            month={
+              movieDetails?.releaseDate
+                ? new Date(movieDetails.releaseDate)
+                : undefined
+            }
+            disabled={{
+              before: movieDetails?.releaseDate
+                ? new Date(
+                    Math.max(new Date(movieDetails.releaseDate), new Date())
+                  )
+                : new Date(), // Ensures dates before today are disabled
+              after: movieDetails?.releaseDate
+                ? new Date(
+                    new Date(movieDetails.releaseDate).setDate(
+                      new Date(movieDetails.releaseDate).getDate() + 7
+                    )
+                  )
+                : undefined,
+            }}
+          />
         </div>
 
         {/* Time Picker */}
-        <div className="w-full md:w-1/3 p-4 bg-white shadow-md rounded-lg" ref={timeRef}>
-          <h3 className="text-lg font-semibold mb-4 text-gray-800">Select Time</h3>
-          <select
-  value={selectedTime}
-  onChange={(e) => {
-    setSelectedTime(e.target.value);
-    setTimeout(() => {
-      seatRef.current?.scrollIntoView({ behavior: "smooth" });
-    }, 200);
-  }}
-  className="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-gray-600" // Added text-gray-600 here
->
-  <option value="" className="text-gray-600">Select Time</option>
-  {["10:00 AM", "12:00 PM", "3:00 PM", "6:00 PM", "9:00 PM"].map((time) => (
-    <option key={time} value={time} className="text-gray-600">
-      {time}
-    </option>
-  ))}
-</select>
-
+        <div
+          className="w-full md:w-1/3 p-4 bg-white shadow-md rounded-lg"
+          ref={timeRef}
+        >
+          <h3 className="text-lg font-semibold mb-4 text-gray-800">
+            Select Time
+          </h3>
+          <div className="flex gap-2">
+            {["10:00 AM", "12:00 PM", "3:00 PM", "6:00 PM", "9:00 PM"].map(
+              (time) => (
+                <button
+                  key={time}
+                  onClick={() => handleTimeSelection(time)} // Use the new handler
+                  className={`time-button p-2 border border-green-500 rounded-md ${
+                    selectedTime === time
+                      ? "bg-green-500 text-white"
+                      : "bg-white text-green-500"
+                  }`}
+                >
+                  {time}
+                </button>
+              )
+            )}
+          </div>
         </div>
 
         {/* Seat Selection */}
         {ticketCount > 0 && selectedDate && selectedTime && (
-          <div className="w-full md:flex-grow p-4 bg-white shadow-md rounded-lg" ref={seatRef}>
-            <h2 className="text-2xl font-semibold mb-4 text-gray-800">Select Your Seats</h2>
+          <div
+            className="w-full md:flex-grow p-4 bg-white shadow-md rounded-lg"
+            ref={seatRef} // Ref for the seat selection section
+          >
+            <h2 className="text-2xl font-semibold mb-4 text-gray-800">
+              Select Your Seats
+            </h2>
             <div className="flex flex-col gap-2">
               {Array.from({ length: rows }, (_, rowIndex) => (
                 <div key={rowIndex} className="flex items-center gap-2">
@@ -288,7 +306,6 @@ useEffect(() => {
                               : "border border-green-700 hover:bg-green-600"
                           }`}
                           onClick={() => handleSeatClick(seat)}
-                          
                         >
                           <span
                             className={`${
@@ -327,20 +344,21 @@ useEffect(() => {
               >
                 Number of Tickets
               </label>
-              <select
-  id="ticketCount"
-  value={ticketCount}
-  onChange={(e) => setTicketCount(Number(e.target.value))}
-  className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm 
-             focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-gray-600 appearance-none"
->
-  {Array.from({ length: 10 }, (_, i) => i + 1).map((num) => (
-    <option key={num} value={num} className="text-gray-600">
-      {num}
-    </option>
-  ))}
-</select>
-
+              <div className="flex gap-2 mt-1">
+                {Array.from({ length: 10 }, (_, i) => i + 1).map((num) => (
+                  <button
+                    key={num}
+                    onClick={() => setTicketCount(num)}
+                    className={`ticket-button p-2 border rounded-md ${
+                      ticketCount === num
+                        ? "bg-indigo-600 text-white"
+                        : "bg-white text-gray-600"
+                    }`}
+                  >
+                    {num}
+                  </button>
+                ))}
+              </div>
             </div>
             <div className="mb-4">
               <h3 className="text-sm font-medium text-gray-700">Your Ride</h3>
