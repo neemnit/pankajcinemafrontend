@@ -35,7 +35,7 @@ const Page = () => {
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
-      <h1 className="text-2xl font-bold text-center mb-6">
+      <h1 className="text-2xl font-bold text-center mb-6 text-gray-950">
         {movies.length === 0 ? "No Movies Currently" : "Now Showing Movies"}
       </h1>
 

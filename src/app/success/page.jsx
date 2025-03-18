@@ -61,18 +61,18 @@ const SuccessPage = () => {
           ref={ticketRef}
           className="bg-white shadow-lg rounded-lg p-4 max-w-sm w-full border border-gray-300 text-gray-900"
         >
-          <h2 className="text-xl font-bold text-center mb-3 text-black">🎟️ Movie Ticket</h2>
+          <h2 className="text-xl font-bold text-center mb-3 text-gray-900">🎟️ Movie Ticket</h2>
           <img
             src={paymentData?.movieId?.image?.url}
             className="w-full h-20 rounded-lg object-cover mb-3"
             alt="Movie Poster"
           />
-          <div className="space-y-2 text-sm">
-            <p className="font-semibold"><strong>🎬 Movie:</strong> {paymentData?.movieId?.name}</p>
-            <p className="font-semibold"><strong>📅 Date:</strong> {paymentData?.userData?.showDate ? new Date(paymentData.userData.showDate).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" }) : "N/A"}</p>
-            <p className="font-semibold"><strong>⏰ Time:</strong> {paymentData?.userData?.showTime}</p>
-            <p className="font-semibold"><strong>💺 Seats:</strong> {paymentData?.userData?.seats?.map(seat => `${seat.row}-${seat.seatNumber}`).join(", ")}</p>
-            <p className="font-semibold"><strong>🎟️ Tickets:</strong> {paymentData?.userData?.seats?.length}</p>
+          <div className="space-y-2 text-sm text-gray-600">
+            <p className="font-semibold text-gray-600"><strong>🎬 Movie:</strong> {paymentData?.movieId?.name}</p>
+            <p className="font-semibold text-gray-600"><strong>📅 Date:</strong> {paymentData?.userData?.showDate ? new Date(paymentData.userData.showDate).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" }) : "N/A"}</p>
+            <p className="font-semibold text-gray-600"><strong>⏰ Time:</strong> {paymentData?.userData?.showTime}</p>
+            <p className="font-semibold text-gray-600"><strong>💺 Seats:</strong> {paymentData?.userData?.seats?.map(seat => `${seat.row}-${seat.seatNumber}`).join(", ")}</p>
+            <p className="font-semibold text-gray-600"><strong>🎟️ Tickets:</strong> {paymentData?.userData?.seats?.length}</p>
             <p className="font-bold text-black border-t border-gray-300 pt-2"><strong>💰 Amount:</strong> ₹{(paymentData?.userData?.seats[0]?.price * paymentData?.userData?.seats.length).toLocaleString()}</p>
           </div>
         </div>

@@ -60,7 +60,7 @@ export default function Home() {
   };
 
   return (
-    <div className="bg-gradient-to-br from-blue-50 to-blue-100 h-auto shadow-lg w-full max-w-md rounded-lg mx-auto mt-10 p-6 border border-gray-300 sm:px-10 md:w-2/3 lg:w-1/2">
+    <div className="bg-gradient-to-br from-blue-50 to-blue-100 h-auto shadow-lg w-full max-w-80 rounded-lg mx-auto mt-10 p-6 border border-gray-300 sm:px-10 md:w-2/3 lg:w-1/2">
       <div className="flex flex-col items-center mb-6">
         <Image
           src="/images/login.webp"

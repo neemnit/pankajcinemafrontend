@@ -81,10 +81,10 @@ const MovieForm = () => {
 
   return (
     <div className="p-6 bg-gray-100 rounded-md shadow-md max-w-lg mx-auto">
-      <h2 className="text-xl font-bold mb-4">Add a New Movie</h2>
+      <h2 className="text-xl font-bold mb-4 text-gray-950">Add a New Movie</h2>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label htmlFor="name" className="block font-medium">
+          <label htmlFor="name" className="block font-medium text-gray-600">
             Movie Name
           </label>
           <input
@@ -99,7 +99,7 @@ const MovieForm = () => {
         </div>
 
         <div>
-          <label htmlFor="ticketPrice" className="block font-medium">
+          <label htmlFor="ticketPrice" className="block font-medium text-gray-600">
             Ticket Price
           </label>
           <input
@@ -114,7 +114,7 @@ const MovieForm = () => {
         </div>
 
         <div>
-          <label htmlFor="description" className="block font-medium">
+          <label htmlFor="description" className="block font-medium text-gray-600">
             Description (optional)
           </label>
           <textarea
@@ -128,7 +128,7 @@ const MovieForm = () => {
         </div>
 
         <div>
-          <label htmlFor="releaseDate" className="block font-medium">
+          <label htmlFor="releaseDate" className="block font-medium text-gray-600">
             Release Date
           </label>
           <input
@@ -143,7 +143,7 @@ const MovieForm = () => {
         </div>
 
         <div>
-          <label htmlFor="image" className="block font-medium">
+          <label htmlFor="image" className="block font-medium text-gray-600">
             Upload Image
           </label>
           <input

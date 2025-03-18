@@ -193,7 +193,7 @@ useEffect(() => {
         {/* Date Picker */}
         <div className="w-full md:w-1/3 p-4 bg-white shadow-md rounded-lg">
           <div className="flex justify-between items-center mb-4">
-            <h3 className="text-lg font-semibold">Select Date</h3>
+            <h3 className="text-lg font-semibold text-gray-800">Select Date</h3>
             <button
               onClick={() => {
                 setIsModalOpen(!isModalOpen);
@@ -213,58 +213,58 @@ useEffect(() => {
             </button>
           </div>
           <DayPicker
-            mode="single"
-            selected={selectedDate}
-            onSelect={setSelectedDate}
-            className="mb-4"
-            month={
-              movieDetails?.releaseDate
-                ? new Date(movieDetails.releaseDate)
-                : undefined
-            }
-            disabled={{
-              before: movieDetails?.releaseDate
-                ? new Date(movieDetails.releaseDate)
-                : undefined,
-              after: movieDetails?.releaseDate
-                ? new Date(
-                    new Date(movieDetails.releaseDate).setDate(
-                      new Date(movieDetails.releaseDate).getDate() + 7
-                    )
-                    
-                  )
-                : undefined,
-            }}
-          />
+  mode="single"
+  selected={selectedDate}
+  onSelect={setSelectedDate}
+  className="mb-4 text-gray-600"
+  month={
+    movieDetails?.releaseDate
+      ? new Date(movieDetails.releaseDate)
+      : undefined
+  }
+  disabled={{
+    before: movieDetails?.releaseDate
+      ? new Date(Math.max(new Date(movieDetails.releaseDate), new Date()))
+      : new Date(), // Ensures dates before today are disabled
+    after: movieDetails?.releaseDate
+      ? new Date(
+          new Date(movieDetails.releaseDate).setDate(
+            new Date(movieDetails.releaseDate).getDate() + 7
+          )
+        )
+      : undefined,
+  }}
+/>
+
         </div>
 
         {/* Time Picker */}
         <div className="w-full md:w-1/3 p-4 bg-white shadow-md rounded-lg" ref={timeRef}>
-          <h3 className="text-lg font-semibold mb-4">Select Time</h3>
+          <h3 className="text-lg font-semibold mb-4 text-gray-800">Select Time</h3>
           <select
-            value={selectedTime}
-            onChange={(e) =>{ setSelectedTime(e.target.value)
-              setTimeout(() => {
-                 seatRef.current?.scrollIntoView({ behavior: "smooth" });
-              }, 200);
-            }}
-            className="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
-          >
-            <option value="">Select Time</option>
-            {["10:00 AM", "12:00 PM", "3:00 PM", "6:00 PM", "9:00 PM"].map(
-              (time) => (
-                <option key={time} value={time}>
-                  {time}
-                </option>
-              )
-            )}
-          </select>
+  value={selectedTime}
+  onChange={(e) => {
+    setSelectedTime(e.target.value);
+    setTimeout(() => {
+      seatRef.current?.scrollIntoView({ behavior: "smooth" });
+    }, 200);
+  }}
+  className="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-gray-600" // Added text-gray-600 here
+>
+  <option value="" className="text-gray-600">Select Time</option>
+  {["10:00 AM", "12:00 PM", "3:00 PM", "6:00 PM", "9:00 PM"].map((time) => (
+    <option key={time} value={time} className="text-gray-600">
+      {time}
+    </option>
+  ))}
+</select>
+
         </div>
 
         {/* Seat Selection */}
         {ticketCount > 0 && selectedDate && selectedTime && (
           <div className="w-full md:flex-grow p-4 bg-white shadow-md rounded-lg" ref={seatRef}>
-            <h2 className="text-2xl font-semibold mb-4">Select Your Seats</h2>
+            <h2 className="text-2xl font-semibold mb-4 text-gray-800">Select Your Seats</h2>
             <div className="flex flex-col gap-2">
               {Array.from({ length: rows }, (_, rowIndex) => (
                 <div key={rowIndex} className="flex items-center gap-2">
@@ -317,7 +317,7 @@ useEffect(() => {
           aria-modal="true"
         >
           <div className="bg-white rounded-lg shadow-xl p-6 w-full md:w-1/3">
-            <h2 className="text-xl font-semibold mb-4">
+            <h2 className="text-xl font-semibold mb-4 text-gray-800">
               Select Ticket Quantity
             </h2>
             <div className="mb-4">
@@ -328,17 +328,19 @@ useEffect(() => {
                 Number of Tickets
               </label>
               <select
-                id="ticketCount"
-                value={ticketCount}
-                onChange={(e) => setTicketCount(Number(e.target.value))}
-                className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-              >
-                {Array.from({ length: 10 }, (_, i) => i + 1).map((num) => (
-                  <option key={num} value={num}>
-                    {num}
-                  </option>
-                ))}
-              </select>
+  id="ticketCount"
+  value={ticketCount}
+  onChange={(e) => setTicketCount(Number(e.target.value))}
+  className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm 
+             focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-gray-600 appearance-none"
+>
+  {Array.from({ length: 10 }, (_, i) => i + 1).map((num) => (
+    <option key={num} value={num} className="text-gray-600">
+      {num}
+    </option>
+  ))}
+</select>
+
             </div>
             <div className="mb-4">
               <h3 className="text-sm font-medium text-gray-700">Your Ride</h3>
