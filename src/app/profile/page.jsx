@@ -79,7 +79,7 @@ const Profile = () => {
   if (pathName !== "/profile") return null;
 
   return (
-    <div className="absolute top-[60px] left-0 right-0 bottom-0 bg-gray-800 flex flex-col items-center justify-center overflow-hidden">
+    <div className="absolute top-0 left-0 w-full h-screen flex flex-col items-center justify-center bg-gray-800 text-gray-800">
       <h1 className="text-4xl font-bold text-white">
         Welcome {profileData?.name}
       </h1>
