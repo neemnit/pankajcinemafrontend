@@ -8,7 +8,7 @@ import Link from "next/link";
 import axios from "../config/axios";
 import UserContext from "./context/UserContext";
 import { useRouter } from "next/navigation";
-
+import { toast } from "react-toastify";
 export default function Home() {
   const router = useRouter();
   const [isPassword, setIsPassword] = useState(true);
@@ -60,7 +60,8 @@ export default function Home() {
   const handleSubmit = async (values, { resetForm }) => {
     try {
       const response = await axios.post("/registerUser", values);
-      alert(response.data.message);
+      
+      toast.success(response.data.message)
       addUser(response.data.user);
       resetForm();
       router.push("/login");
@@ -105,18 +106,28 @@ export default function Home() {
 }
 
 function FieldWithError({ name, label, type, touched, values }) {
+  const maxLength = name === "adharNo" ? 16 : null;
+
   return (
     <div>
       <label className="block text-gray-700 font-medium text-xs" htmlFor={name}>
         {label}
       </label>
-      <Field
-        type={type}
-        id={name}
-        name={name}
-        className={`mt-1 p-2 w-full border-2 rounded-md transition-all 
-          ${values[name] ? "text-gray-600" : "text-gray-800"} border-gray-300 focus:border-blue-500`}
-      />
+      <div className="relative">
+        <Field
+          type={type}
+          id={name}
+          name={name}
+          maxLength={maxLength} // Prevents input beyond 16 digits for Aadhaar
+          className={`mt-1 p-2 w-full border-2 rounded-md transition-all 
+            ${values[name] ? "text-gray-600" : "text-gray-800"} border-gray-300 focus:border-blue-500`}
+        />
+        {name === "adharNo" && (
+          <p className="absolute right-2 bottom-2 text-xs text-gray-500">
+            {values.adharNo.length}/16
+          </p>
+        )}
+      </div>
       <ErrorMessage name={name} component="div" className="text-red-500 text-xs" />
     </div>
   );

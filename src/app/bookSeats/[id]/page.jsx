@@ -47,6 +47,7 @@ const Page = () => {
 
   const rows = 10;
   const cols = 10;
+const checkIsFull=bookedSeats.find(item=>item.movieId===id)
 
   // Fetch movie details
   useEffect(() => {
@@ -83,6 +84,7 @@ const Page = () => {
     if (selectedDate && selectedTime) {
       getSeats(); // Fetch booked seats from the server
     }
+    getSeats()
   }, [selectedDate, selectedTime, getSeats]);
 
   // Update seat booking status based on booked seats
@@ -256,22 +258,30 @@ const Page = () => {
             Select Time
           </h3>
           <div className="flex gap-2">
-            {["10:00 AM", "12:00 PM", "3:00 PM", "6:00 PM", "9:00 PM"].map(
-              (time) => (
-                <button
-                  key={time}
-                  onClick={() => handleTimeSelection(time)} // Use the new handler
-                  className={`time-button p-2 border border-green-500 rounded-md ${
-                    selectedTime === time
-                      ? "bg-green-500 text-white"
-                      : "bg-white text-green-500"
-                  }`}
-                >
-                  {time}
-                </button>
-              )
-            )}
-          </div>
+          {["10:00 AM", "12:00 PM", "3:00 PM", "6:00 PM", "9:00 PM"].map((time) => {
+  const isSold =
+    checkIsFull?.showTime === time &&
+    new Date(checkIsFull.showDate).getDate() === new Date(selectedDate).getDate() &&
+    checkIsFull.isFull;
+
+  return (
+    <button
+      key={time}
+      onClick={() => handleTimeSelection(time)}
+      disabled={isSold} // Disable the button if the show is sold out
+      className={`time-button p-2 border border-green-500 rounded-md ${
+        isSold
+          ? "bg-gray-400 cursor-not-allowed border-none font-semibold text-red-700 px-2"
+          : selectedTime === time
+          ? "bg-green-500 text-white"
+          : "bg-white text-green-500"
+      }`}
+    >
+      {isSold ? ` Sold` : time} {/* Display "Sold" if the show is full */}
+    </button>
+  );
+})}
+</div>
         </div>
 
         {/* Seat Selection */}
@@ -302,7 +312,7 @@ const Page = () => {
                             seat.isBooked
                               ? "bg-gray-300 cursor-not-allowed"
                               : selectedSeats.includes(seat)
-                              ? "bg-blue-500 hover:bg-blue-600"
+                              ? "bg-green-500 hover:bg-blue-600"
                               : "border border-green-700 hover:bg-green-600"
                           }`}
                           onClick={() => handleSeatClick(seat)}
@@ -311,7 +321,9 @@ const Page = () => {
                             className={`${
                               seat.isBooked
                                 ? "text-gray-500"
-                                : "text-green-500 hover:text-white"
+                                :selectedSeats.includes(seat)?
+                                 "text-white"
+                    : "text-green-500"
                             }`}
                           >
                             {seat.seatNumber}
