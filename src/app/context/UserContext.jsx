@@ -102,7 +102,13 @@ const pathName=usePathname()
       }
     }
   }, []);
+  const privateRoutes = ["/viewmovie", "/my-booking", "/addmovie", "/success"];
 
+  useEffect(() => {
+    if (!isLoggedIn && privateRoutes.includes(pathName)) {
+      router.push("/"); // Redirect to login if not authenticated
+    }
+  }, [isLoggedIn, pathName, router, privateRoutes]);
   const getSeats = useCallback(async () => {
     try {
       const response = await axios.get("/getSeats", {
