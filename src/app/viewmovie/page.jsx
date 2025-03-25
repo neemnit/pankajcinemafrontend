@@ -2,8 +2,9 @@
 import React, { useContext, useEffect } from "react";
 import Image from "next/image";
 import UserContext from "../context/UserContext";
-import { notFound, usePathname } from "next/navigation";
+import { notFound, usePathname ,useRouter} from "next/navigation";
 import NotFound from "../not-found";
+
 
 
 const Page = () => {
@@ -16,12 +17,15 @@ const Page = () => {
     fetchMoviesAndUsers,
   } = useContext(UserContext);
   const pathName=usePathname()
-
+const router=useRouter()
   useEffect(() => {
     if(pathName!="/viewmovie"){
         notFound()
     }
+  if(!localStorage.getItem("authToken")){
+    router.push('/login')
   
+  }
     fetchMoviesAndUsers();
   }, [fetchMoviesAndUsers]);
 
