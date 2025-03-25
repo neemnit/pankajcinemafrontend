@@ -19,7 +19,7 @@ const pathName=usePathname()
   }, []);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[82vh] py-2 bg-gray-800">
+    <div className="absolute top-0 left-0 w-full h-screen flex flex-col items-center justify-center bg-gray-100 text-gray-800">
       <h1 className="text-4xl font-bold text-white">
         Welcome {profileData?.name}
       </h1>
