@@ -90,7 +90,7 @@ export default function Home() {
                 type="email"
                 id="email"
                 name="email"
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring focus:ring-blue-200 focus:border-blue-400 transition"
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring focus:ring-blue-200 focus:border-blue-400 transition text-gray-500"
               />
               <ErrorMessage
                 name="email"
@@ -111,7 +111,7 @@ export default function Home() {
                   type={isPassword ? "password" : "text"}
                   id="password"
                   name="password"
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring focus:ring-blue-200 focus:border-blue-400 transition"
+                  className="w-full border text-gray-500 border-gray-300 rounded-lg px-3 py-2 focus:ring focus:ring-blue-200 focus:border-blue-400 transition"
                 />
                 <button
                   type="button"

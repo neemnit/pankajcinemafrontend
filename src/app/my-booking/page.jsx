@@ -54,23 +54,23 @@ const Page = () => {
 
               {/* Booking Information */}
               <div className="w-full md:w-2/3 p-6">
-                <h2 className="text-2xl font-bold mb-4">{movieName}</h2>
+                <h2 className="text-2xl font-bold mb-4 text-gray-900">{movieName}</h2>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {/* Show Time and Date */}
                   <div>
                     <p className="text-gray-600 font-semibold">Show Time</p>
-                    <p className="text-lg">{showTime}</p>
+                    <p className="text-lg text-gray-500">{showTime}</p>
                   </div>
                   <div>
                     <p className="text-gray-600 font-semibold">Date</p>
-                    <p className="text-lg">{formattedDate}</p>
+                    <p className="text-lg text-gray-500">{formattedDate}</p>
                   </div>
 
                   {/* Tickets and Seats */}
                   <div>
                     <p className="text-gray-600 font-semibold">Tickets</p>
-                    <p className="text-lg">{tickets}</p>
+                    <p className="text-lg text-gray-500">{tickets}</p>
                   </div>
                   <div>
                     <p className="text-gray-600 font-semibold">Seats</p>
@@ -78,7 +78,7 @@ const Page = () => {
                       {seatNumber.map((seat, seatIndex) => (
                         <span
                           key={seat._id}
-                          className="bg-gray-100 px-3 py-1 rounded-full text-sm"
+                          className="bg-gray-100 px-3 py-1 rounded-full text-sm text-gray-400"
                         >
                           {seat.row}-{seat.number}
                         </span>
