@@ -105,7 +105,8 @@ const pathName=usePathname()
   const privateRoutes = ["/viewmovie", "/my-booking", "/addmovie", "/success"];
 
   useEffect(() => {
-    if (!isLoggedIn && privateRoutes.includes(pathName)) {
+    const token=localStorage.getItem("authToken")
+    if (!token && privateRoutes.includes(pathName)) {
       router.push("/"); // Redirect to login if not authenticated
     }
   }, [isLoggedIn, pathName, router, privateRoutes]);
