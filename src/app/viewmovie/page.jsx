@@ -32,7 +32,7 @@ const router=useRouter()
   if (!movies || movies.length === 0) {
     return (
       <div className="p-6 bg-gray-100 min-h-screen text-center">
-        <h1 className="text-2xl font-bold">No Movies Available</h1>
+        <h1 className="text-2xl font-bold text-gray-950">No Movies Available</h1>
       </div>
     );
   }

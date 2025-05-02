@@ -40,7 +40,7 @@ export default function Home() {
       .required("Email is required")
       .test("is-unique", "Email already exists", async (value) => {
         if (!value) return true;
-        return await checkUnique(value);
+        return  checkUnique(value);
       }),
 
     password: Yup.string()
@@ -53,7 +53,7 @@ export default function Home() {
       .required("Aadhaar Card is required")
       .test("is-unique", "Aadhaar Card number already exists", async (value) => {
         if (!value) return true;
-        return await checkUnique(value);
+        return  checkUnique(value);
       }),
   });
 
@@ -72,7 +72,7 @@ export default function Home() {
 
   return (
     !isLoggedIn && (
-      <div className="flex justify-center items-center mt-2 ">
+      <div className="flex justify-center items-center mt-16 ">
         <div className="bg-white opacity-90 max-w-md w-full mx-4 sm:mx-10 md:mx-20 p-6 sm:p-10 rounded-lg text-center shadow-lg border border-gray-300">
           <div className="flex justify-center mb-3">
             <Image src="/images/register.webp" height={30} width={30} alt="Register" />
@@ -152,7 +152,7 @@ function PasswordField({ name, isPassword, setIsPassword, touched, values }) {
           className="absolute right-2 top-2 text-gray-600 text-xs"
           onClick={() => setIsPassword(!isPassword)}
         >
-          {isPassword ? "👁️" : "🙈"}
+          {isPassword ? <i className="fa-solid fa-eye-slash"></i> : <i className="fa-solid fa-eye"></i>}
         </button>
       </div>
       <ErrorMessage name={name} component="div" className="text-red-500 text-xs" />
