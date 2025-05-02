@@ -94,7 +94,7 @@ const MovieForm = () => {
             value={formData.name}
             onChange={handleInputChange}
             required
-            className="w-full p-2 border border-gray-300 rounded-md"
+            className="w-full p-2 border border-gray-300 rounded-md text-gray-900"
           />
         </div>
 
@@ -109,7 +109,7 @@ const MovieForm = () => {
             value={formData.ticketPrice}
             onChange={handleInputChange}
             required
-            className="w-full p-2 border border-gray-300 rounded-md"
+            className="w-full p-2 border border-gray-300 rounded-md text-gray-900"
           />
         </div>
 
